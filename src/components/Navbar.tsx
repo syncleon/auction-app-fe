@@ -1,5 +1,5 @@
 import React, {FC} from 'react';
-import {Menu} from "antd";
+import {Menu, message} from "antd";
 import {Header} from "antd/es/layout/layout";
 import Logo from '../resources/logo.svg'
 import {useHistory} from "react-router-dom";
@@ -48,6 +48,7 @@ const Navbar: FC = () => {
 
     const handleLogoutClick = () => {
         logout()
+        message.success('Logout successful!', 2)
         history.push(RouteNames.HOME);
     };
 

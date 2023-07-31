@@ -10,6 +10,7 @@ const LoginForm: FC = () => {
     const {error, isLoading} = useTypedSelector(state => state.auth);
     const [username, SetUsername] = useState('')
     const [password, SetPassword] = useState('' )
+    const [successMessage, setSuccessMessage] = useState('');
     const {login} = useActions()
     const history = useHistory()
 
@@ -18,7 +19,7 @@ const LoginForm: FC = () => {
         login(username,password)
     }
 
-    const handleRegisterClick = () => {
+    const handleSignUpClick = () => {
         history.push(RouteNames.REGISTER);
     };
 
@@ -41,9 +42,8 @@ const LoginForm: FC = () => {
             onFinishFailed={() => error}
             autoComplete="off"
         >
-            {error && <div style={{color: 'red'}}>
-                {error}
-            </div>}
+            {successMessage && <div style={{ color: 'green' }}>{successMessage}</div>}
+            {error && <div style={{ color: 'red' }}>{error}</div>}
             <Form.Item
                 label="Username"
                 name="username"
@@ -87,9 +87,8 @@ const LoginForm: FC = () => {
                     span: 16,
                 }}
             >
-                No account?
-                <Button type="link" onClick={handleRegisterClick}>
-                Register
+            No account?<Button type="link" onClick={handleSignUpClick} loading={isLoading}>
+                Create it!
             </Button>
             </Form.Item>
         </Form>

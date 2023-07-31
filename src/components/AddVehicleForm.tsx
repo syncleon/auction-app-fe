@@ -1,12 +1,15 @@
 import React, { useState } from 'react';
-import { Form, Input, InputNumber, Select, Switch, Button } from 'antd';
+import {Form, Input, InputNumber, Select, Switch, Button, message} from 'antd';
 import axios from "axios";
+import {useHistory} from "react-router-dom";
+import {RouteNames} from "../routes";
 
 const { Option } = Select;
 
 const AddVehicleForm = () => {
     const [form] = Form.useForm();
     const [loading, setLoading] = useState(false);
+    const history = useHistory(); // Hook for performing redirects
 
     const handleSubmit = async () => {
         try {
@@ -16,12 +19,14 @@ const AddVehicleForm = () => {
             const token = localStorage.getItem('token');
             const headers = {
                 Authorization: `Bearer ${token}`,
-                'Content-Type': 'application/json', // Set the content type as JSON
+                'Content-Type': 'application/json',
             };
 
             await axios.post('http://localhost:8080/api/v1/vehicles', formData, { headers });
 
             setLoading(false);
+            message.success('Car vehicle created successfully'); // Display success notification
+            history.push(RouteNames.PROFILE); // Redirect to "/profile"
         } catch (error) {
             console.log('Form validation error:', error);
             setLoading(false);
