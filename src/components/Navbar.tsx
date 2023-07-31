@@ -5,8 +5,6 @@ import Logo from '../resources/logo.svg'
 import {useHistory} from "react-router-dom";
 import {RouteNames} from "../routes";
 import {useTypedSelector} from "../hooks/useTypedSelector";
-import {AuthActionCreators} from "../store/reducers/auth/action-creators";
-import {useDispatch} from "react-redux";
 import {useActions} from "../hooks/useActions";
 
 const Navbar: FC = () => {
@@ -14,7 +12,7 @@ const Navbar: FC = () => {
     const history = useHistory()
     const {logout} = useActions()
 
-    const {isAuth, user} = useTypedSelector(state => state.auth )
+    const {isAuth, user} = useTypedSelector(state => state.auth)
 
     const headerStyle = {
         display: 'flex',
@@ -36,62 +34,69 @@ const Navbar: FC = () => {
         history.push(RouteNames.LOGIN);
     };
 
-    const handleSignUpClick = () => {
-        history.push(RouteNames.SIGNUP);
-    };
+    const handleAppLogoClick = () => {
+        history.push(RouteNames.HOME);
+    }
+
+    const handleUsernameClick = () => {
+        history.push(RouteNames.PROFILE)
+    }
 
     const handleLogoutClick = () => {
         logout()
-        history   .push(RouteNames.HOME);
+        history.push(RouteNames.HOME);
     };
 
     return (
         <Header>
             <div style={headerStyle}>
-                <img src={Logo} alt="Logo" style={logoStyle} />
+                <img src={Logo}
+                     alt="Logo"
+                     style={logoStyle}
+                     onClick={handleAppLogoClick}
+                     className={"logo"}
+
+                />
                 {
                     isAuth
-                    ?
-                    <>
-                    <div style={{
-                        marginRight: 'auto',
-                        color : 'white' }}>
-                        {user.username}
-                    </div>m
-                    <Menu
-                        style={menuStyle}
-                        theme="dark"
-                        mode="horizontal"
-                        selectable={false}
-                        items={[
-                            {
-                                key: '1',
-                                label: 'Logout',
-                                onClick: handleLogoutClick,
+                        ?
+                        <>
+                            <Menu
+                                style={menuStyle}
+                                theme="dark"
+                                mode="horizontal"
+                                selectable={false}
+                                items={[
+                                    {
+                                        key: '1',
+                                        label: 'Logout',
+                                        onClick: handleLogoutClick,
 
-                            }
-                        ]}
-                    />
-                    </>
-                    :
-                    <Menu
-                        style={menuStyle}
-                        theme="dark"
-                        mode="horizontal"
-                        selectable={false}
-                        items={[
-                            {
-                                key: '1',
-                                label: 'Login',
-                                onClick: handleLoginClick
-                            },
-                            {
-                                key: '2',
-                                label: 'Sign Up',
-                                onClick: handleSignUpClick
-                            },
-                        ]}
-                    />
+                                    },
+                                    {
+                                        key: '2',
+                                        label: user.username,
+                                        onClick: handleUsernameClick,
+
+                                    },
+
+                                ]}
+                            />
+                        </>
+                        :
+                        <Menu
+                            style={menuStyle}
+                            theme="dark"
+                            mode="horizontal"
+                            selectable={false}
+                            items={[
+                                {
+                                    key: '1',
+                                    label: 'Login',
+                                    onClick: handleLoginClick
+                                },
+                            ]}
+                        />
                 }
             </div>
         </Header>

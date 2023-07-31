@@ -1,7 +1,7 @@
 import React from "react";
 import Login from "../pages/Login";
 import Profile from "../pages/Profile";
-import Signup from "../pages/Signup";
+import Register from "../pages/Register";
 import Home from "../pages/Home";
 
 export interface IRoute {
@@ -12,13 +12,13 @@ export interface IRoute {
 
 export enum RouteNames{
     LOGIN = '/login',
-    SIGNUP = '/signup',
+    REGISTER = '/register',
     PROFILE = '/profile',
     HOME = '/'
 }
 
 export const publicRoutes: IRoute[] = [
-    {path: RouteNames.SIGNUP, exact: true, component: Signup},
+    {path: RouteNames.REGISTER, exact: true, component: Register},
     {path: RouteNames.HOME, exact: true, component: Home},
     {path: RouteNames.LOGIN, exact: true, component: Login},
 ]

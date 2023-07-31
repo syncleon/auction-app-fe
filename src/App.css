@@ -1,3 +1,18 @@
 .h100 {
     height: calc(100vh - 64px);
 }
+
+/* styles.css (or any other CSS file you are using) */
+
+/* Normal style for the logo */
+.logo {
+    /* Add your regular styling here */
+}
+
+/* Hover effect style for the logo */
+.logo:hover {
+    /* Add your hover effect styling here */
+    /* For example, you can change the opacity or add a border on hover */
+    opacity: 0.7;
+    cursor: pointer;
+}
