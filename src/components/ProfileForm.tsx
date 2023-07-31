@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import {Col, Row} from "antd";
 
-// Define the interface for the currentUser object
 interface Vehicle {
     id: number;
     producer: string;
@@ -33,17 +33,13 @@ const ProfileForm = () => {
     const [currentUser, setCurrentUser] = useState<User | null>(null);
 
     useEffect(() => {
-        // Get the authentication token from wherever it is stored (e.g., accessToken variable)
-        const accessToken = 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyMSIsImV4cCI6MTY5MjA0MjkxMywiaWF0IjoxNjg5NDUwOTEzLCJ1c2VySWQiOjF9.WvyRUYPVq1hIRx4yD6CrrjZpT6kHfMUdqQzCUK6BID4'; // Replace this with the actual token
-
-        // Fetch the user data from the API endpoint with the Bearer token in the headers
+        const accessToken = localStorage.getItem('token')
         axios.get('http://localhost:8080/api/v1/users/current', {
             headers: {
                 Authorization: `Bearer ${accessToken}`,
             },
         })
             .then((response) => {
-                // Assuming the API response contains the properties id, username, and email
                 const { id, username, email, vehicles } = response.data;
                 setCurrentUser({
                     id,
@@ -58,7 +54,6 @@ const ProfileForm = () => {
     }, []);
 
     if (!currentUser) {
-        // Render a loading state while fetching the user data
         return <div>Loading...</div>;
     }
 
@@ -78,26 +73,21 @@ const ProfileForm = () => {
                 <span>{currentUser.email}</span>
             </div>
             <div>
-                <h3>Vehicles:</h3>
-                <ul>
+
+                <Row gutter={[16, 16]}>
                     {currentUser.vehicles.map((vehicle) => (
-                        <li key={vehicle.id}>
-                            <p>
-                                <strong>Producer:</strong> {vehicle.producer}
-                            </p>
-                            <p>
-                                <strong>Model:</strong> {vehicle.model}
-                            </p>
-                            <p>
-                                <strong>Year:</strong> {vehicle.year}
-                            </p>
-                            <p>
-                                <strong>Mileage:</strong> {vehicle.mileage}
-                            </p>
-                            {/* Add more vehicle details here if needed */}
-                        </li>
+                        <Col key={vehicle.id}>
+                            {/* Automatically adjust column size to fit content */}
+                            <div style={{ padding: 16, border: '1px solid #ccc' }}>
+                                <p>make: {vehicle.producer}</p>
+                                <p>model: {vehicle.model}</p>
+                                <p>vin: {vehicle.vin}</p>
+                                <p>mileage: {vehicle.mileage}</p>
+                                <p>year: {vehicle.year}</p>
+                            </div>
+                        </Col>
                     ))}
-                </ul>
+                </Row>
             </div>
         </div>
     );

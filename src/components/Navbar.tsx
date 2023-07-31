@@ -30,6 +30,10 @@ const Navbar: FC = () => {
         justifyContent: 'end',
     };
 
+    const handleAddClick= () => {
+        history.push(RouteNames.ADD)
+    }
+
     const handleLoginClick = () => {
         history.push(RouteNames.LOGIN);
     };
@@ -55,35 +59,9 @@ const Navbar: FC = () => {
                      style={logoStyle}
                      onClick={handleAppLogoClick}
                      className={"logo"}
-
                 />
-                {
-                    isAuth
-                        ?
-                        <>
-                            <Menu
-                                style={menuStyle}
-                                theme="dark"
-                                mode="horizontal"
-                                selectable={false}
-                                items={[
-                                    {
-                                        key: '1',
-                                        label: 'Logout',
-                                        onClick: handleLogoutClick,
-
-                                    },
-                                    {
-                                        key: '2',
-                                        label: user.username,
-                                        onClick: handleUsernameClick,
-
-                                    },
-
-                                ]}
-                            />
-                        </>
-                        :
+                {isAuth ? (
+                    <>
                         <Menu
                             style={menuStyle}
                             theme="dark"
@@ -92,12 +70,37 @@ const Navbar: FC = () => {
                             items={[
                                 {
                                     key: '1',
-                                    label: 'Login',
-                                    onClick: handleLoginClick
+                                    label: 'Add',
+                                    onClick: handleAddClick,
+                                },
+                                {
+                                    key: '2',
+                                    label: user.username,
+                                    onClick: handleUsernameClick,
+                                },
+                                {
+                                    key: '3',
+                                    label: 'Logout',
+                                    onClick: handleLogoutClick,
                                 },
                             ]}
                         />
-                }
+                    </>
+                ) : (
+                    <Menu
+                        style={menuStyle}
+                        theme="dark"
+                        mode="horizontal"
+                        selectable={false}
+                        items={[
+                            {
+                                key: '1',
+                                label: 'Login',
+                                onClick: handleLoginClick,
+                            },
+                        ]}
+                    />
+                )}
             </div>
         </Header>
     );
