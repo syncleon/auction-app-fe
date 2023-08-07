@@ -4,6 +4,7 @@ import Profile from "../pages/Profile";
 import Register from "../pages/Register";
 import Home from "../pages/Home";
 import AddVehicle from "../pages/AddVehicle";
+import VehicleDetails from "../pages/VehicleDetails";
 
 export interface IRoute {
     path: string;
@@ -16,17 +17,20 @@ export enum RouteNames{
     REGISTER = '/register',
     PROFILE = '/profile',
     HOME = '/',
-    ADD = '/add'
+    ADD = '/add',
+    VEHICLE_DETAILS = '/vehicles/:id'
 }
 
 export const publicRoutes: IRoute[] = [
     {path: RouteNames.REGISTER, exact: true, component: Register},
     {path: RouteNames.HOME, exact: true, component: Home},
     {path: RouteNames.LOGIN, exact: true, component: Login},
+    {path: RouteNames.VEHICLE_DETAILS, exact: true, component: VehicleDetails}
 ]
 
 export const privateRoutes: IRoute[] = [
     {path: RouteNames.PROFILE, exact: true, component: Profile},
     {path: RouteNames.HOME, exact: true, component: Home},
     {path: RouteNames.ADD, exact: true, component: AddVehicle},
+    {path: RouteNames.VEHICLE_DETAILS, exact: true, component: VehicleDetails}
 ]

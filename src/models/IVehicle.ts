@@ -10,6 +10,7 @@ export interface Vehicle {
     expectedBid: number;
     damaged: boolean;
     sellerId: number;
+    sellerUsername: string;
     images: string[];
 }
 

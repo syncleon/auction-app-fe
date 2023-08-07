@@ -2,9 +2,16 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Col, Row } from 'antd';
 import {Vehicle} from "../models/IVehicle";
+import {useHistory} from "react-router-dom";
+import {RouteNames} from "../routes";
 
 const HomeForm = () => {
     const [vehicles, setVehicles] = useState<Vehicle[]>([]);
+    const history = useHistory()
+
+    const handleClickOnImage = (vehicleId: number) => {
+        history.push(RouteNames.VEHICLE_DETAILS.replace(':id', String(vehicleId)));
+    }
 
     useEffect(() => {
         axios
@@ -37,7 +44,7 @@ const HomeForm = () => {
                     {chunk.map((vehicle) => (
                         <Col key={vehicle.id} span={24 / chunkSize}>
                             <div style={{ padding: 16, border: '1px solid #ccc' }}>
-                                <div style={{ height: '200px', overflow: 'hidden' }}>
+                                <div className="img-container" onClick={() => handleClickOnImage(vehicle.id)}>
                                     <img
                                         src={`http://localhost:63958/${vehicle.images[0]}`}
                                         alt={vehicle.make}
@@ -45,7 +52,13 @@ const HomeForm = () => {
                                     />
                                 </div>
                                 <p style={{ fontWeight: 'bold' }}>
+                                    {vehicle.expectedBid} $
+                                </p>
+                                <p style={{ fontWeight: 'bold' }}>
                                     {vehicle.year}, {vehicle.make}, {vehicle.model}
+                                </p>
+                                <p>
+                                    Owner: {vehicle.sellerUsername}
                                 </p>
                             </div>
                         </Col>

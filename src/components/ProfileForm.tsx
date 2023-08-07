@@ -1,91 +1,68 @@
 import React, { useEffect, useState } from 'react';
+import { Tabs, Row, Col } from 'antd';
 import axios from 'axios';
-import { Col, Row } from 'antd';
-import ImageGallery from 'react-image-gallery';
-import 'react-image-gallery/styles/css/image-gallery.css';
 import { Vehicle } from '../models/IVehicle';
 
-interface User {
-    id: number;
-    username: string;
-    email: string;
-    vehicles: Vehicle[];
-}
-
-interface ImageGalleryItem {
-    original: string;
-    thumbnail: string;
-}
+const { TabPane } = Tabs;
 
 const ProfileForm = () => {
-    const [currentUser, setCurrentUser] = useState<User | null>(null);
+    const [vehicles, setVehicles] = useState<Vehicle[]>([]);
 
     useEffect(() => {
         const accessToken = localStorage.getItem('token');
         axios
-            .get('http://localhost:8080/api/v1/users/current', {
+            .get('http://localhost:8080/api/v1/vehicles', {
                 headers: {
                     Authorization: `Bearer ${accessToken}`,
                 },
             })
             .then((response) => {
-                const { id, username, email, vehicles } = response.data;
-                setCurrentUser({
-                    id,
-                    username,
-                    email,
-                    vehicles,
-                });
+                setVehicles(response.data);
             })
             .catch((error) => {
-                console.error('Error fetching user data:', error);
+                console.error('Error fetching vehicles data:', error);
             });
     }, []);
 
-    if (!currentUser) {
-        return <div>Loading...</div>;
-    }
-
-    // Function to resize and map vehicle images to optimized URLs
-    const getOptimizedImageUrls = (images: string[]): ImageGalleryItem[] => {
-        const serverUrl = 'http://localhost:63958/';
-        return images.map((image) => ({
-            original: serverUrl + image + '?width=500&height=500', // Resize the image on the server side using query parameters
-            thumbnail: serverUrl + image + '?width=100&height=100', // Use the same URL for thumbnails for simplicity
-        }));
-    };
-
     return (
-        <div>
-            {/* User profile details */}
-            {/* ... */}
-            <div>
-                <Row gutter={[16, 16]}>
-                    {currentUser.vehicles.map((vehicle) => (
-                        <Col key={vehicle.id}>
-                            <h1>Vehicle Details</h1>
-                            {/* ... other vehicle details ... */}
-                            <p>Images:</p>
-                            {/* Image slider with resized images */}
-                            <ImageGallery
-                                items={getOptimizedImageUrls(vehicle.images)}
-                                showPlayButton={false}
-                                showFullscreenButton={false}
-                                showNav={false}
-                                // Set the dimensions of the images in the slider
-                                renderItem={(item) => (
-                                    <img
-                                        src={item.original}
-                                        alt={item.originalAlt}
-                                        style={{ width: 'auto', height: '500px' }}
-                                    />
-                                )}
-                            />
-                        </Col>
-                    ))}
-                </Row>
-            </div>
-        </div>
+        <Tabs defaultActiveKey="user-vehicles" centered>
+            <TabPane tab="User Details" key="user-details">
+                {/* Render user details component */}
+            </TabPane>
+            <TabPane tab="User Vehicles" key="user-vehicles">
+                <div>
+                    <Row gutter={[15, 15]}>
+                        {vehicles.map((vehicle) => (
+                            <Col key={vehicle.id} xs={24} sm={12} md={8} lg={6}>
+
+                                <div style={{ border: '1px solid #ccc', padding: '16px' }}>
+                                    <div>
+                                        {vehicle.images.map((image, index) => (
+                                            <img
+                                                key={`image-${index}`}
+                                                src={`http://localhost:63958/${image}`}
+                                                alt={`Vehicle ${vehicle.id} - Image ${index + 1}`}
+                                                style={{ width: '100%', maxWidth: '150px', height: 'auto', marginBottom: '10px' }}
+                                            />
+                                        ))}
+                                    </div>
+                                    <p>Make: {vehicle.make}</p>
+                                    <p>Model: {vehicle.model}</p>
+                                    <p>Mileage: {vehicle.mileage}</p>
+                                    <p>VIN: {vehicle.vin}</p>
+                                    <p>Year: {vehicle.year}</p>
+                                    <p>Expected Bid: {vehicle.expectedBid}</p>
+                                    <p>Is Damaged: {vehicle.damaged ? 'Yes' : 'No'}</p>
+                                </div>
+                            </Col>
+                        ))}
+                    </Row>
+                </div>
+            </TabPane>
+            <TabPane tab="Settings" key="settings">
+                {/* Render settings component */}
+            </TabPane>
+        </Tabs>
     );
 };
 
