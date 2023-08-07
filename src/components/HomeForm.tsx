@@ -1,27 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Col, Row } from 'antd';
-
-interface Vehicle {
-    // Define the properties of the Vehicle interface here
-    id: number;
-    producer: string;
-    model: string;
-    mileage: number;
-    vin: string;
-    year: string;
-    engine: string;
-    drivetrain: string;
-    transmission: string;
-    bodyStyle: string;
-    exteriorColor: string;
-    interiorColor: string;
-    sellerType: string;
-    highlights: string;
-    expectedBid: number;
-    damaged: boolean;
-    sellerId: number;
-}
+import {Vehicle} from "../models/IVehicle";
 
 const HomeForm = () => {
     const [vehicles, setVehicles] = useState<Vehicle[]>([]);
@@ -51,17 +31,22 @@ const HomeForm = () => {
     const vehicleChunks = chunkArray(vehicles, chunkSize);
 
     return (
-        <div style={{ width: '70%', margin: '0 auto' }}>
+        <div style={{ width: '90%', margin: '0 auto' }}>
             {vehicleChunks.map((chunk, index) => (
                 <Row gutter={[16, 16]} key={index}>
                     {chunk.map((vehicle) => (
                         <Col key={vehicle.id} span={24 / chunkSize}>
                             <div style={{ padding: 16, border: '1px solid #ccc' }}>
-                                <p>make: {vehicle.producer}</p>
-                                <p>model: {vehicle.model}</p>
-                                <p>vin: {vehicle.vin}</p>
-                                <p>mileage: {vehicle.mileage}</p>
-                                <p>year: {vehicle.year}</p>
+                                <div style={{ height: '200px', overflow: 'hidden' }}>
+                                    <img
+                                        src={`http://localhost:63958/${vehicle.images[0]}`}
+                                        alt={vehicle.make}
+                                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                                    />
+                                </div>
+                                <p style={{ fontWeight: 'bold' }}>
+                                    {vehicle.year}, {vehicle.make}, {vehicle.model}
+                                </p>
                             </div>
                         </Col>
                     ))}

@@ -28,5 +28,5 @@ export const publicRoutes: IRoute[] = [
 export const privateRoutes: IRoute[] = [
     {path: RouteNames.PROFILE, exact: true, component: Profile},
     {path: RouteNames.HOME, exact: true, component: Home},
-    {path: RouteNames.ADD, exact: true, component: AddVehicle}
+    {path: RouteNames.ADD, exact: true, component: AddVehicle},
 ]

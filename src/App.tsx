@@ -18,8 +18,6 @@ const App:FC = () => {
         }
     )
 
-
-
     return (
         <Layout>
             <Navbar/>
