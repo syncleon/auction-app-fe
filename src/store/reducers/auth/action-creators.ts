@@ -9,7 +9,6 @@ import {
 import {IUser} from "../../../models/IUsers";
 import {AppDispatch} from "../../index";
 import axios from "axios";
-import {message} from "antd";
 
 
 export const AuthActionCreators = {
@@ -54,7 +53,6 @@ export const AuthActionCreators = {
             localStorage.setItem('username', username);
             localStorage.setItem('token', token)
             dispatch(AuthActionCreators.setSuccess("Login success!"))
-            message.success(`Login success, Welcome back ${username}!`);
             dispatch(AuthActionCreators.setIsAuth(true));
             dispatch(AuthActionCreators.setUser(user));
             dispatch(AuthActionCreators.setIsLoading(false));

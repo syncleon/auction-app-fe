@@ -1,14 +1,16 @@
-import React, {FC} from 'react';
-import {Layout, Row} from "antd";
-import LoginForm from "../components/LoginForm";
+import React, { FC } from 'react';
+import { Container, Grid } from '@mui/material';
+import LoginForm from '../components/LoginForm';
 
-const Login:FC = () => {
+const Login: FC = () => {
     return (
-        <Layout>
-            <Row justify="center" align="middle" className="h100">
-               <LoginForm/>
-            </Row>
-        </Layout>
+        <Container maxWidth="xs">
+            <Grid container justifyContent="center" alignItems="center" style={{ minHeight: '100vh' }}>
+                <Grid item xs={12}>
+                    <LoginForm />
+                </Grid>
+            </Grid>
+        </Container>
     );
 };
 

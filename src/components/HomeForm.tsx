@@ -1,17 +1,21 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import { Col, Row } from 'antd';
-import {Vehicle} from "../models/IVehicle";
-import {useHistory} from "react-router-dom";
+import React, { useState, useEffect } from 'react';
+import { useHistory } from 'react-router-dom';
+import Grid from '@mui/material/Grid';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import CardMedia from '@mui/material/CardMedia';
+import Typography from '@mui/material/Typography';
 import {RouteNames} from "../routes";
+import {Vehicle} from "../models/IVehicle";
+import axios from "axios";
 
 const HomeForm = () => {
     const [vehicles, setVehicles] = useState<Vehicle[]>([]);
-    const history = useHistory()
+    const history = useHistory();
 
     const handleClickOnImage = (vehicleId: number) => {
         history.push(RouteNames.VEHICLE_DETAILS.replace(':id', String(vehicleId)));
-    }
+    };
 
     useEffect(() => {
         axios
@@ -25,47 +29,29 @@ const HomeForm = () => {
             });
     }, []);
 
-    const chunkSize = 4;
-
-    const chunkArray = (arr: Vehicle[], size: number) => {
-        const chunks: Vehicle[][] = [];
-        for (let i = 0; i < arr.length; i += size) {
-            chunks.push(arr.slice(i, i + size));
-        }
-        return chunks;
-    };
-
-    const vehicleChunks = chunkArray(vehicles, chunkSize);
-
     return (
-        <div style={{ width: '90%', margin: '0 auto' }}>
-            {vehicleChunks.map((chunk, index) => (
-                <Row gutter={[16, 16]} key={index}>
-                    {chunk.map((vehicle) => (
-                        <Col key={vehicle.id} span={24 / chunkSize}>
-                            <div style={{ padding: 16, border: '1px solid #ccc' }}>
-                                <div className="img-container" onClick={() => handleClickOnImage(vehicle.id)}>
-                                    <img
-                                        src={`http://localhost:63958/${vehicle.images[0]}`}
-                                        alt={vehicle.make}
-                                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                                    />
-                                </div>
-                                <p style={{ fontWeight: 'bold' }}>
-                                    {vehicle.expectedBid} $
-                                </p>
-                                <p style={{ fontWeight: 'bold' }}>
-                                    {vehicle.year}, {vehicle.make}, {vehicle.model}
-                                </p>
-                                <p>
-                                    Owner: {vehicle.sellerUsername}
-                                </p>
-                            </div>
-                        </Col>
-                    ))}
-                </Row>
+        <Grid container spacing={3}>
+            {vehicles.map(vehicle => (
+                <Grid item xs={12} sm={6} md={4} lg={3} key={vehicle.id}>
+                    <Card>
+                        <CardMedia
+                            component="img"
+                            alt={`${vehicle.make} ${vehicle.model}`}
+                            height="200"
+                            image={`http://localhost:63958/${vehicle.images[0]}`}
+                            onClick={() => handleClickOnImage(vehicle.id)}
+                        />
+                        <CardContent>
+                            <Typography variant="h6">{vehicle.make} {vehicle.model}</Typography>
+                            <Typography variant="body2">Year: {vehicle.year}</Typography>
+                            <Typography variant="body2">Mileage: {vehicle.mileage}</Typography>
+                            <Typography variant="body2">Expected Bid: {vehicle.expectedBid}</Typography>
+                            <Typography variant="body2">Seller: {vehicle.sellerUsername}</Typography>
+                        </CardContent>
+                    </Card>
+                </Grid>
             ))}
-        </div>
+        </Grid>
     );
 };
 

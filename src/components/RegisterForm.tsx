@@ -1,97 +1,88 @@
-import React, {FC, useState} from "react";
-import {useTypedSelector} from "../hooks/useTypedSelector";
-import {useActions} from "../hooks/useActions";
-import {useHistory} from "react-router-dom";
-import {RouteNames} from "../routes";
-import {Button, Form, Input} from "antd";
-import {rules} from "../utils/rules";
+import React, { FC, useState } from 'react';
+import { Button, Container, Typography, Link, Grid, TextField, CircularProgress } from '@mui/material';
+import { useTypedSelector } from '../hooks/useTypedSelector';
+import { useActions } from '../hooks/useActions';
+import { useHistory } from 'react-router-dom';
+import { RouteNames } from '../routes';
+import { rules } from '../utils/rules';
 
 const RegisterForm: FC = () => {
     const {error, isLoading} = useTypedSelector(state => state.auth);
-    const [username, SetUsername] = useState('')
-    const [email, SetEmail] = useState('')
-    const [password, SetPassword] = useState('')
-    const {register} = useActions()
-    const history = useHistory()
+    const [username, setUsername] = useState('');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const {register} = useActions();
+    const history = useHistory();
 
-
-    const submit = () => {
-        register(username,email,password)
-    }
+    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        register(
+            username,
+            email,
+            password);
+    };
 
     const handleLoginClick = () => {
         history.push(RouteNames.LOGIN);
     };
 
     return (
-        <Form
-            name="basic"
-            labelCol={{
-                span: 8,
-            }}
-            wrapperCol={{
-                span: 16,
-            }}
+        <form
+            onSubmit={handleSubmit}
             style={{
-                maxWidth: 600,
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
             }}
-            initialValues={{
-                remember: true,
-            }}
-            onFinish={submit}
-            onFinishFailed={() => error}
-            autoComplete="off"
         >
-            {error && <div style={{color: 'red'}}>
-                {error}
-            </div>}
-            <Form.Item
+            <TextField
                 label="Username"
-                name="username"
-                rules={[rules.required("Please input username!")]}
-            >
-                <Input value={username} onChange={e => SetUsername(e.target.value)} />
-            </Form.Item>
-
-            <Form.Item
+                value={username}
+                onChange={e => setUsername(e.target.value)}
+                variant="outlined"
+                margin="normal"
+                required
+            />
+            <TextField
                 label="Email"
-                name="email"
-                rules={[rules.required("Please input email!")]}
-            >
-                <Input value={username} onChange={e => SetEmail(e.target.value)} />
-            </Form.Item>
-
-            <Form.Item
+                type="email"
+                value={email}
+                onChange={e => setEmail(e.target.value)}
+                variant="outlined"
+                margin="normal"
+                required
+            />
+            <TextField
                 label="Password"
-                name="password"
-                rules={[rules.required("Please input password!")]}
+                type="password"
+                value={password}
+                onChange={e => setPassword(e.target.value)}
+                variant="outlined"
+                margin="normal"
+                required
+            />
+            {error && (
+                <Typography variant="body2" color="error" gutterBottom>
+                    {error}
+                </Typography>
+            )}
+            <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+                style={{margin: '1rem 0'}}
+                disabled={isLoading}
             >
-                <Input.Password value={password} onChange={e => SetPassword(e.target.value)}/>
-            </Form.Item>
-
-            <Form.Item
-                wrapperCol={{
-                    offset: 8,
-                    span: 16,
-                }}
-            >
-                <Button type="primary" htmlType="submit" loading={isLoading}>
-                    Register
-                </Button>
-            </Form.Item>
-            <Form.Item
-                wrapperCol={{
-                    offset: 8,
-                    span: 30,
-                }}
-            >
-                Have account?
-                <Button type="link" onClick={handleLoginClick}>
-                    Login
-                </Button>
-            </Form.Item>
-        </Form>
-    )
+                {isLoading ? <CircularProgress size={24} color="inherit"/> : 'Register'}
+            </Button>
+            <Typography>
+                Have an account?{' '}
+                <Link component="button" variant="body2" onClick={handleLoginClick}>
+                    Perform login!
+                </Link>
+            </Typography>
+        </form>
+    );
 };
 
 export default RegisterForm;

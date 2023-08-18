@@ -1,38 +1,21 @@
-import React, {FC} from 'react';
-import {Menu, message} from "antd";
-import {Header} from "antd/es/layout/layout";
-import Logo from '../resources/logo.svg'
-import {useHistory} from "react-router-dom";
-import {RouteNames} from "../routes";
-import {useTypedSelector} from "../hooks/useTypedSelector";
-import {useActions} from "../hooks/useActions";
+import React, { FC } from 'react';
+import AppBar from '@mui/material/AppBar';
+import Toolbar from '@mui/material/Toolbar';
+import Button from '@mui/material/Button';
+import { useHistory } from 'react-router-dom';
+import { RouteNames } from '../routes';
+import { useTypedSelector } from '../hooks/useTypedSelector';
+import { useActions } from '../hooks/useActions';
+import Logo from '../resources/logo.svg';
 
 const Navbar: FC = () => {
+    const history = useHistory();
+    const {logout} = useActions();
+    const {isAuth, user} = useTypedSelector(state => state.auth);
 
-    const history = useHistory()
-    const {logout} = useActions()
-
-    const {isAuth, user} = useTypedSelector(state => state.auth)
-
-    const headerStyle = {
-        display: 'flex',
-        alignItems: 'center',
+    const handleAddClick = () => {
+        history.push(RouteNames.ADD);
     };
-
-    const logoStyle = {
-        width: '100px',
-        height: 'auto',
-        marginRight: '10px',
-    };
-
-    const menuStyle = {
-        width: '100%',
-        justifyContent: 'end',
-    };
-
-    const handleAddClick= () => {
-        history.push(RouteNames.ADD)
-    }
 
     const handleLoginClick = () => {
         history.push(RouteNames.LOGIN);
@@ -40,70 +23,50 @@ const Navbar: FC = () => {
 
     const handleAppLogoClick = () => {
         history.push(RouteNames.HOME);
-    }
+    };
 
     const handleUsernameClick = () => {
-        history.push(RouteNames.PROFILE)
-    }
+        history.push(RouteNames.PROFILE);
+    };
 
     const handleLogoutClick = () => {
-        logout()
-        message.success('Logout successful!', 2)
+        logout();
+
         history.push(RouteNames.HOME);
     };
 
+
     return (
-        <Header>
-            <div style={headerStyle}>
-                <img src={Logo}
-                     alt="Logo"
-                     style={logoStyle}
-                     onClick={handleAppLogoClick}
-                     className={"logo"}
+        <AppBar position="static">
+            <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                <img
+                    src={Logo}
+                    alt="Logo"
+                    style={{ width: '100px', height: 'auto', cursor: 'pointer' }}
+                    onClick={handleAppLogoClick}
+                    className="logo"
                 />
                 {isAuth ? (
                     <>
-                        <Menu
-                            style={menuStyle}
-                            theme="dark"
-                            mode="horizontal"
-                            selectable={false}
-                            items={[
-                                {
-                                    key: '1',
-                                    label: 'Add',
-                                    onClick: handleAddClick,
-                                },
-                                {
-                                    key: '2',
-                                    label: user.username,
-                                    onClick: handleUsernameClick,
-                                },
-                                {
-                                    key: '3',
-                                    label: 'Logout',
-                                    onClick: handleLogoutClick,
-                                },
-                            ]}
-                        />
+                        <div>
+                            <Button color="inherit" onClick={handleAddClick}>
+                                Sell a car
+                            </Button>
+                            <Button color="inherit" onClick={handleUsernameClick}>
+                                {user.username}
+                            </Button>
+                            <Button color="inherit" onClick={handleLogoutClick}>
+                                Logout
+                            </Button>
+                        </div>
                     </>
                 ) : (
-                    <Menu
-                        style={menuStyle}
-                        theme="dark"
-                        mode="horizontal"
-                        selectable={false}
-                        items={[
-                            {
-                                key: '1',
-                                label: 'Login',
-                                onClick: handleLoginClick,
-                            },
-                        ]}
-                    />
+                    <Button color="inherit" onClick={handleLoginClick}>
+                        Login
+                    </Button>
                 )}
-            </div>
-        </Header>
+            </Toolbar>
+        </AppBar>
     );
 };
 

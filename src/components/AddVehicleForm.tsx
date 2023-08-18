@@ -10,14 +10,13 @@ const AddVehicleForm = () => {
     const [selectedImages, setSelectedImages] = useState<FileList | null>(null);
     const [previewUrls, setPreviewUrls] = useState<string[]>([]);
     const history = useHistory();
-    const vehicleMakes = ["Toyota", "Honda", "Ford", "Chevrolet", "Nissan", "BMW", "Mercedes-Benz", "Audi", "Volkswagen"];
     const [selectedMake, setSelectedMake] = useState("");
     const [availableModels, setAvailableModels] = useState<string[]>([]);
 
+
+    const vehicleMakes = ["Toyota", "Honda", "Ford", "Chevrolet", "Nissan", "BMW", "Mercedes-Benz", "Audi", "Volkswagen"];
     const handleMakeChange = (make: string) => { // Specify the type of the parameter
         setSelectedMake(make);
-        // You would need to define a function to fetch available models based on the selected make
-        // For now, I'll just simulate the models for demonstration
         const simulatedModels = ["Model 1", "Model 2", "Model 3"];
         setAvailableModels(simulatedModels);
     };
@@ -121,6 +120,13 @@ const AddVehicleForm = () => {
                     <Input style={{ textTransform: 'uppercase' }} maxLength={17} />
                 </Form.Item>
                 <Form.Item
+                    label="Mileage"
+                    name="mileage"
+                    rules={[{required: true, message: 'Please enter mileage'}]}
+                >
+                    <InputNumber/>
+                </Form.Item>
+                <Form.Item
                     label="Expected Bid"
                     name="expectedBid"
                     rules={[{required: true, message: 'Please enter the expected bid'}]}
@@ -138,7 +144,7 @@ const AddVehicleForm = () => {
                         accept="image/*"
                         multiple
                         onChange={handleImageChange}
-                        required  // Add the "required" attribute
+                        required
                     />
                     <br/>
                     {previewUrls.length > 0 ? (
