@@ -14,10 +14,22 @@ const AddVehicleForm = () => {
     const [availableModels, setAvailableModels] = useState<string[]>([]);
 
 
-    const vehicleMakes = ["Toyota", "Honda", "Ford", "Chevrolet", "Nissan", "BMW", "Mercedes-Benz", "Audi", "Volkswagen"];
-    const handleMakeChange = (make: string) => { // Specify the type of the parameter
+    const vehicleMakes = [
+        "Toyota",
+        "Honda",
+        "Ford",
+        "Chevrolet",
+        "Nissan",
+        "BMW",
+        "Mercedes-Benz",
+        "Audi", "" +
+        "Volkswagen"];
+
+    const handleMakeChange = (make: string) => {
         setSelectedMake(make);
-        const simulatedModels = ["Model 1", "Model 2", "Model 3"];
+        const simulatedModels = ["Model 1",
+            "Model 2",
+            "Model 3"];
         setAvailableModels(simulatedModels);
     };
     const currentYear = new Date().getFullYear();
@@ -38,7 +50,7 @@ const AddVehicleForm = () => {
             return;
         }
         const localFilePaths = Array.from(selectedImages!).map((file) => {
-            return file.name; // or any property that gives you the local path
+            return file.name;
         });
         try {
             setLoading(true);
@@ -50,7 +62,7 @@ const AddVehicleForm = () => {
                 vin: formData.vin,
                 expectedBid: formData.expectedBid,
                 damaged: formData.damaged,
-                images: localFilePaths, // Assuming selectedImages contains the image URLs
+                images: localFilePaths,
             };
 
             console.log(requestData)

@@ -19,7 +19,7 @@ const LoginForm: FC = () => {
     const history = useHistory();
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault(); // Prevents the default form submission behavior
+        e.preventDefault();
         login(username, password);
     };
 

@@ -1,5 +1,3 @@
-// Vehicle.ts
-
 export interface Vehicle {
     id: number;
     make: string;
@@ -12,5 +10,6 @@ export interface Vehicle {
     sellerId: number;
     sellerUsername: string;
     images: string[];
+    deleted: boolean
 }
 
