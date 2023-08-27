@@ -3,8 +3,8 @@
           dominant-baseline="middle"
           text-anchor="middle"
           font-family="Arial"
-          font-size="30"
-          fill="white">
-        MY APP
+          font-size="35"
+          fill="black">
+        My APP
     </text>
 </svg>

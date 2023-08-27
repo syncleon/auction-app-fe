@@ -9,6 +9,7 @@ import {
 import {IUser} from "../../../models/IUsers";
 import {AppDispatch} from "../../index";
 import axios from "axios";
+import {apiInstance} from "../../../axios-instance";
 
 
 export const AuthActionCreators = {
@@ -38,7 +39,7 @@ export const AuthActionCreators = {
     login: (username: string, password: string) => async (dispatch: AppDispatch) => {
         try {
             dispatch(AuthActionCreators.setIsLoading(true));
-            const response = await axios.post<{ token: string }>('http://localhost:8080/api/v1/signin', {
+            const response = await apiInstance.post<{ token: string }>('signin', {
                 username: username,
                 password: password,
             });
@@ -78,7 +79,7 @@ export const AuthActionCreators = {
     register: (username: string, email: string, password: string) => async (dispatch: AppDispatch) => {
         try {
             dispatch(AuthActionCreators.setIsLoading(true));
-            const response = await axios.post<{ token: string }>('http://localhost:8080/api/v1/signup', {
+            const response = await apiInstance.post<{ token: string }>('signup', {
                 username: username,
                 email: email,
                 password: password,
@@ -106,14 +107,14 @@ export const AuthActionCreators = {
 
     profile: () => async (dispatch: AppDispatch) => {
         const response = await
-            axios.get <
+            apiInstance.get <
             {
                 id: string,
                 username: string,
                 email: string,
                 vehicles: string
 
-            }>('localhost:8080/api/v1/users/current')
+            }>('users/current')
         console.log(response.data.id)
     }
 }

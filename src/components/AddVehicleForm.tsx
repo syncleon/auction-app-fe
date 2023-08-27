@@ -1,37 +1,52 @@
-import React, {useState} from 'react';
-import {Button, Form, Input, InputNumber, message, Select, Switch} from 'antd';
+import React, {useEffect, useState} from 'react';
+import { Button, Form, Input, InputNumber, message, Select, Switch } from 'antd';
 import axios from 'axios';
-import {useHistory} from 'react-router-dom';
-import {RouteNames} from '../routes';
+import { useHistory } from 'react-router-dom';
+import { RouteNames } from '../routes';
+import {FormData} from "../models/FormData";
+import vehicleMakersModels from "../models/VehicleMakersModels";
+import { apiInstance } from '../axios-instance';
 
-const AddVehicleForm = () => {
+const AddVehicleForm: React.FC = () => {
     const [form] = Form.useForm();
     const [loading, setLoading] = useState(false);
     const [selectedImages, setSelectedImages] = useState<FileList | null>(null);
     const [previewUrls, setPreviewUrls] = useState<string[]>([]);
-    const history = useHistory();
-    const [selectedMake, setSelectedMake] = useState("");
+    const [selectedMake, setSelectedMake] = useState<string>("");
+    const [selectedModel, setSelectedModel] = useState<string>("");
     const [availableModels, setAvailableModels] = useState<string[]>([]);
+    const [makeChangeCount, setMakeChangeCount] = useState(0);
 
+    const history = useHistory();
 
-    const vehicleMakes = [
-        "Toyota",
-        "Honda",
-        "Ford",
-        "Chevrolet",
-        "Nissan",
-        "BMW",
-        "Mercedes-Benz",
-        "Audi", "" +
-        "Volkswagen"];
+    const resetFormFields = () => {
+        const fieldsToReset = [
+            "model",
+            "year",
+            "vin",
+            "mileage",
+            "expectedBid",
+            "damaged",
+            "images"];
+        form.resetFields(fieldsToReset);
+        setSelectedImages(null);
+        setPreviewUrls([]);
+    };
 
     const handleMakeChange = (make: string) => {
-        setSelectedMake(make);
-        const simulatedModels = ["Model 1",
-            "Model 2",
-            "Model 3"];
-        setAvailableModels(simulatedModels);
+            setSelectedMake(make);
+            setAvailableModels(vehicleMakersModels[make] || []);
+            setMakeChangeCount(makeChangeCount + 1);
+            if (makeChangeCount >= 1) {
+                resetFormFields();
+                setMakeChangeCount(0);
+            }
+        };
+
+    const handleModelChange = (model: string) => {
+        setSelectedModel(model);
     };
+
     const currentYear = new Date().getFullYear();
     const years = Array.from({ length: currentYear - 1900 + 1 }, (_, index) => (currentYear - index).toString());
 
@@ -44,12 +59,12 @@ const AddVehicleForm = () => {
         }
     };
 
-    const handleSubmit = async (formData: any) => {
+    const handleSubmit = async (formData: FormData) => {
         if (!selectedImages || selectedImages.length === 0) {
             message.error('Please select at least one image.');
             return;
         }
-        const localFilePaths = Array.from(selectedImages!).map((file) => {
+        const localFilePaths = Array.from(selectedImages).map((file) => {
             return file.name;
         });
         try {
@@ -65,26 +80,23 @@ const AddVehicleForm = () => {
                 images: localFilePaths,
             };
 
-            console.log(requestData)
-
             const token = localStorage.getItem('token');
             const headers = {
                 Authorization: `Bearer ${token}`,
             };
 
-            await axios.post('http://localhost:8080/api/v1/vehicles', requestData, {headers});
+            await apiInstance.post('vehicles', requestData, { headers });
 
             setLoading(false);
             message.success('Car vehicle created successfully');
             history.push(RouteNames.PROFILE);
         } catch (error) {
-            console.log('Error:', error);
+            console.error('Error:', error);
             setLoading(false);
         }
     };
 
     return (
-        <div style={{width: '70%'}}>
             <Form form={form} layout="horizontal" onFinish={handleSubmit} size="small">
                 <Form.Item
                     label="Make"
@@ -96,7 +108,7 @@ const AddVehicleForm = () => {
                         onChange={handleMakeChange}
                         value={selectedMake}
                     >
-                        {vehicleMakes.map((make) => (
+                        {Object.keys(vehicleMakersModels).map((make) => (
                             <Select.Option key={make} value={make}>
                                 {make}
                             </Select.Option>
@@ -106,10 +118,12 @@ const AddVehicleForm = () => {
                 <Form.Item
                     label="Model"
                     name="model"
-                    rules={[{ required: true, message: 'Please enter the model' }]}
+                    rules={[{ required: true, message: 'Please select the model' }]}
                 >
                     <Select
                         placeholder="Select a model"
+                        value={selectedModel}
+                        onChange={handleModelChange}
                         disabled={!selectedMake}
                     >
                         {availableModels.map((model) => (
@@ -134,19 +148,19 @@ const AddVehicleForm = () => {
                 <Form.Item
                     label="Mileage"
                     name="mileage"
-                    rules={[{required: true, message: 'Please enter mileage'}]}
+                    rules={[{ required: true, message: 'Please enter mileage' }]}
                 >
-                    <InputNumber/>
+                    <InputNumber />
                 </Form.Item>
                 <Form.Item
                     label="Expected Bid"
                     name="expectedBid"
-                    rules={[{required: true, message: 'Please enter the expected bid'}]}
+                    rules={[{ required: true, message: 'Please enter the expected bid' }]}
                 >
-                    <InputNumber/>
+                    <InputNumber />
                 </Form.Item>
                 <Form.Item label="Damaged" name="damaged" valuePropName="checked">
-                    <Switch/>
+                    <Switch />
                 </Form.Item>
                 <Form.Item>
                     <label htmlFor="imageInput">Select images from your PC:</label>
@@ -158,12 +172,12 @@ const AddVehicleForm = () => {
                         onChange={handleImageChange}
                         required
                     />
-                    <br/>
+                    <br />
                     {previewUrls.length > 0 ? (
                         <div>
                             <h3>Selected Image Previews:</h3>
                             {previewUrls.map((url, index) => (
-                                <img key={index} src={url} alt={`Selected ${index + 1}`} style={{maxWidth: '300px'}}/>
+                                <img key={index} src={url} alt={`Selected ${index + 1}`} style={{ maxWidth: '300px' }} />
                             ))}
                         </div>
                     ) : (
@@ -176,8 +190,6 @@ const AddVehicleForm = () => {
                     </Button>
                 </Form.Item>
             </Form>
-        </div>
-
     );
 };
 

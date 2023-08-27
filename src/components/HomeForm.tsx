@@ -5,9 +5,9 @@ import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
-import {RouteNames} from "../routes";
-import {Vehicle} from "../models/IVehicle";
-import axios from "axios";
+import { RouteNames } from '../routes';
+import { Vehicle } from '../models/IVehicle';
+import { apiInstance, imageInstance } from '../axios-instance';
 
 const HomeForm = () => {
     const [vehicles, setVehicles] = useState<Vehicle[]>([]);
@@ -18,8 +18,8 @@ const HomeForm = () => {
     };
 
     useEffect(() => {
-        axios
-            .get('http://localhost:8080/api/v1/vehicles/all')
+        apiInstance
+            .get('vehicles/all')
             .then((response) => {
                 const vehiclesData: Vehicle[] = response.data;
                 setVehicles(vehiclesData);
@@ -31,26 +31,32 @@ const HomeForm = () => {
 
     return (
         <Grid container spacing={3}>
-            {vehicles.map(vehicle => (
-                <Grid item xs={12} sm={6} md={4} lg={3} key={vehicle.id}>
-                    <Card>
-                        <CardMedia
-                            component="img"
-                            alt={`${vehicle.make} ${vehicle.model}`}
-                            height="200"
-                            image={`http://localhost:63958/${vehicle.images[0]}`}
-                            onClick={() => handleClickOnImage(vehicle.id)}
-                        />
-                        <CardContent>
-                            <Typography variant="h6">{vehicle.make} {vehicle.model}</Typography>
-                            <Typography variant="body2">Year: {vehicle.year}</Typography>
-                            <Typography variant="body2">Mileage: {vehicle.mileage}</Typography>
-                            <Typography variant="body2">Expected Bid: {vehicle.expectedBid}</Typography>
-                            <Typography variant="body2">Seller: {vehicle.sellerUsername}</Typography>
-                        </CardContent>
-                    </Card>
-                </Grid>
-            ))}
+            {vehicles
+                .filter((vehicle) => !vehicle.deleted)
+                .map((vehicle) => (
+                    <Grid item xs={12} sm={6} md={4} lg={4} key={vehicle.id}>
+                        <Card>
+                            <CardMedia
+                                component="img"
+                                alt={`${vehicle.make} ${vehicle.model}`}
+                                width="100%"
+                                // Use imageInstance for loading images
+                                image={`http://localhost:63958/${vehicle.images[0]}`}
+                                onClick={() => handleClickOnImage(vehicle.id)}
+                                style={{ objectFit: 'contain' }}
+                                onError={(e) => {
+                                }}
+                            />
+                            <CardContent>
+                                <Typography variant="h6">{vehicle.make} {vehicle.model}</Typography>
+                                <Typography variant="body2">Year: {vehicle.year}</Typography>
+                                <Typography variant="body2">Mileage: {vehicle.mileage}</Typography>
+                                <Typography variant="body2">Expected Bid: {vehicle.expectedBid}</Typography>
+                                <Typography variant="body2">Seller: {vehicle.sellerUsername}</Typography>
+                            </CardContent>
+                        </Card>
+                    </Grid>
+                ))}
         </Grid>
     );
 };

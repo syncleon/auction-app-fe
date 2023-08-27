@@ -7,14 +7,15 @@ import CardMedia from '@mui/material/CardMedia';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
+import {apiInstance} from "../axios-instance";
 
 const VehicleDetailsForm = () => {
     const { id }: { id: string } = useParams();
     const [vehicle, setVehicle] = useState<Vehicle | null>(null);
 
     useEffect(() => {
-        axios
-            .get(`http://localhost:8080/api/v1/vehicles/${id}`)
+        apiInstance
+            .get(`vehicles/${id}`)
             .then((response) => {
                 setVehicle(response.data);
             })

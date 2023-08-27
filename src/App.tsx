@@ -4,9 +4,14 @@ import Navbar from "./components/Navbar";
 import './App.css'
 import {useActions} from "./hooks/useActions";
 import {IUser} from "./models/IUsers";
+import {Container} from "@mui/material";
 
 const App:FC = () => {
     const {setUser, setIsAuth} = useActions()
+
+    const containerStyle = {
+        maxWidth: '70%', // Set your desired max width here
+    };
 
     useEffect(() =>
         {
@@ -18,10 +23,10 @@ const App:FC = () => {
     )
 
     return (
-        <>
+        <Container style={containerStyle}>
             <Navbar/>
             <AppRouter />
-        </>
+        </Container>
     );
 };
 

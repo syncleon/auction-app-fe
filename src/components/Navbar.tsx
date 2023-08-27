@@ -10,8 +10,8 @@ import Logo from '../resources/logo.svg';
 
 const Navbar: FC = () => {
     const history = useHistory();
-    const {logout} = useActions();
-    const {isAuth, user} = useTypedSelector(state => state.auth);
+    const { logout } = useActions();
+    const { isAuth, user } = useTypedSelector(state => state.auth);
 
     const handleAddClick = () => {
         history.push(RouteNames.ADD);
@@ -31,37 +31,68 @@ const Navbar: FC = () => {
 
     const handleLogoutClick = () => {
         logout();
-
         history.push(RouteNames.HOME);
     };
 
-
     return (
-        <AppBar position="static">
-            <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                <img
-                    src={Logo}
-                    alt="Logo"
-                    style={{ width: '100px', height: 'auto', cursor: 'pointer' }}
-                    onClick={handleAppLogoClick}
-                    className="logo"
-                />
+        <AppBar
+            position="relative"
+            sx={{
+                backgroundColor: 'white',
+                boxShadow: 'none',
+                borderBottom: '1px solid #e0e0e0',}}>
+            <Toolbar
+                sx={{
+                    display: 'flex',
+                    justifyContent: 'space-between' }}>
+                <a
+                    href={RouteNames.HOME}
+                    style={{
+                        textDecoration: 'none' }}>
+                    <img
+                        src={Logo}
+                        alt="Logo"
+                        style={{ width: '100px', height: 'auto', cursor: 'pointer' }}
+                        onClick={handleAppLogoClick}
+                        className="logo"
+                    />
+                </a>
                 {isAuth ? (
                     <>
                         <div>
-                            <Button color="inherit" onClick={handleAddClick}>
+                            <Button
+                                color="inherit"
+                                onClick={handleAddClick}
+                                    sx={{
+                                        color: 'black',
+                                        textTransform: 'none' }}>
                                 Sell a car
                             </Button>
-                            <Button color="inherit" onClick={handleUsernameClick}>
+                            <Button
+                                color="inherit"
+                                onClick={handleUsernameClick}
+                                sx={{
+                                    color: 'black',
+                                    textTransform: 'none' }}>
                                 {user.username}
                             </Button>
-                            <Button color="inherit" onClick={handleLogoutClick}>
+                            <Button
+                                color="inherit"
+                                onClick={handleLogoutClick}
+                                sx={{
+                                    color: 'black',
+                                    textTransform: 'none' }}>
                                 Logout
                             </Button>
                         </div>
                     </>
                 ) : (
-                    <Button color="inherit" onClick={handleLoginClick}>
+                    <Button
+                        color="inherit"
+                        onClick={handleLoginClick}
+                        sx={{
+                            color: 'black',
+                            textTransform: 'none' }}>
                         Login
                     </Button>
                 )}
