@@ -1,195 +1,269 @@
-import React, {useEffect, useState} from 'react';
-import { Button, Form, Input, InputNumber, message, Select, Switch } from 'antd';
-import axios from 'axios';
-import { useHistory } from 'react-router-dom';
-import { RouteNames } from '../routes';
-import {FormData} from "../models/FormData";
-import vehicleMakersModels from "../models/VehicleMakersModels";
-import { apiInstance } from '../axios-instance';
+import React, { useState, useEffect } from "react";
+import {
+    Button,
+    Container,
+    Typography,
+    Box,
+    TextField,
+    FormControlLabel,
+    Checkbox,
+} from "@mui/material";
+import { apiInstance } from "../axios-instance";
+import { message } from "antd";
+import { RouteNames } from "../routes";
+import { useHistory } from "react-router-dom";
+
+interface VehicleInfo {
+    make: string;
+    model: string;
+    mileage: string;
+    vin: string;
+    year: string;
+    expectedBid: string;
+    damaged: boolean;
+}
 
 const AddVehicleForm: React.FC = () => {
-    const [form] = Form.useForm();
+    const [files, setFiles] = useState<FileList | null>(null);
+    const [filePreviews, setFilePreviews] = useState<string[]>([]);
     const [loading, setLoading] = useState(false);
-    const [selectedImages, setSelectedImages] = useState<FileList | null>(null);
-    const [previewUrls, setPreviewUrls] = useState<string[]>([]);
-    const [selectedMake, setSelectedMake] = useState<string>("");
-    const [selectedModel, setSelectedModel] = useState<string>("");
-    const [availableModels, setAvailableModels] = useState<string[]>([]);
-    const [makeChangeCount, setMakeChangeCount] = useState(0);
-
+    const [success, setSuccess] = useState(false); // Add success state
     const history = useHistory();
+    const [vehicleInfo, setVehicleInfo] = useState<VehicleInfo>({
+        make: "",
+        model: "",
+        mileage: "",
+        vin: "",
+        year: "",
+        expectedBid: "",
+        damaged: false,
+    });
 
-    const resetFormFields = () => {
-        const fieldsToReset = [
-            "model",
-            "year",
-            "vin",
-            "mileage",
-            "expectedBid",
-            "damaged",
-            "images"];
-        form.resetFields(fieldsToReset);
-        setSelectedImages(null);
-        setPreviewUrls([]);
-    };
-
-    const handleMakeChange = (make: string) => {
-            setSelectedMake(make);
-            setAvailableModels(vehicleMakersModels[make] || []);
-            setMakeChangeCount(makeChangeCount + 1);
-            if (makeChangeCount >= 1) {
-                resetFormFields();
-                setMakeChangeCount(0);
-            }
-        };
-
-    const handleModelChange = (model: string) => {
-        setSelectedModel(model);
-    };
-
-    const currentYear = new Date().getFullYear();
-    const years = Array.from({ length: currentYear - 1900 + 1 }, (_, index) => (currentYear - index).toString());
-
-    const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const files = event.target.files;
+    const handleCreateVehicle = async (formData: FormData) => {
         if (files) {
-            const previewUrls = Array.from(files).map((file) => URL.createObjectURL(file));
-            setSelectedImages(files);
-            setPreviewUrls(previewUrls);
+            const formData = new FormData();
+
+            for (let i = 0; i < files.length; i++) {
+                formData.append("images", files[i]);
+            }
+
+            formData.append(
+                "payload",
+                JSON.stringify({
+                    make: vehicleInfo.make,
+                    model: vehicleInfo.model,
+                    mileage: vehicleInfo.mileage,
+                    vin: vehicleInfo.vin,
+                    year: vehicleInfo.year,
+                    expectedBid: vehicleInfo.expectedBid,
+                })
+            );
+
+            try {
+                const token = localStorage.getItem('token');
+                const headers = {
+                    Authorization: `Bearer ${token}`,
+                    "Content-Type": "multipart/form-data"
+                }
+                await apiInstance.post('vehicles', formData, {headers});
+                setLoading(false);
+                setSuccess(true); // Set success to true
+                message.success('Car vehicle created successfully');
+                // No need to redirect here, we'll redirect after rendering the success message
+            } catch (error) {
+                console.error('Error:', error);
+                setLoading(false);
+            }
         }
     };
 
-    const handleSubmit = async (formData: FormData) => {
-        if (!selectedImages || selectedImages.length === 0) {
-            message.error('Please select at least one image.');
-            return;
+    useEffect(() => {
+        if (files) {
+            const previews: string[] = [];
+
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                const reader = new FileReader();
+
+                reader.onload = (e) => {
+                    if (e.target && e.target.result && typeof e.target.result === "string") {
+                        previews.push(e.target.result);
+                        if (previews.length === files.length) {
+                            setFilePreviews(previews);
+                        }
+                    }
+                };
+
+                reader.readAsDataURL(file);
+            }
+        } else {
+            setFilePreviews([]);
         }
-        const localFilePaths = Array.from(selectedImages).map((file) => {
-            return file.name;
-        });
-        try {
-            setLoading(true);
-            const requestData = {
-                make: formData.make,
-                model: formData.model,
-                mileage: formData.mileage,
-                year: formData.year,
-                vin: formData.vin,
-                expectedBid: formData.expectedBid,
-                damaged: formData.damaged,
-                images: localFilePaths,
-            };
+    }, [files]);
 
-            const token = localStorage.getItem('token');
-            const headers = {
-                Authorization: `Bearer ${token}`,
-            };
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files) {
+            setFiles(e.target.files);
+        }
+    };
 
-            await apiInstance.post('vehicles', requestData, { headers });
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const {name, value, type, checked} = e.target;
 
-            setLoading(false);
-            message.success('Car vehicle created successfully');
-            history.push(RouteNames.PROFILE);
-        } catch (error) {
-            console.error('Error:', error);
-            setLoading(false);
+        setVehicleInfo((prevInfo) => ({
+            ...prevInfo,
+            [name]: type === "checkbox" ? checked : value,
+        }));
+    };
+
+    const handleUpload = async () => {
+        // Include vehicleInfo in your upload logic as needed
+
+        if (files) {
+
+            const formData = new FormData();
+
+            [...files].forEach((file) => {
+                formData.append("files", file);
+            });
+
+            try {
+                const result = await fetch("https://httpbin.org/post", {
+                    method: "POST",
+                    body: formData,
+                });
+
+                const data = await result.json();
+
+                console.log(data);
+            } catch (error) {
+                console.error(error);
+            }
+        }
+    };
+
+    const handleAddVehicle = async () => {
+        // Call handleCreateVehicle and pass the formData
+        if (files) {
+            const formData = new FormData();
+
+            // ... (same code as before)
+
+            try {
+                await handleCreateVehicle(formData); // Call handleCreateVehicle here
+                history.push(RouteNames.PROFILE); // Redirect after success
+            } catch (error) {
+                console.error(error);
+            }
         }
     };
 
     return (
-            <Form form={form} layout="horizontal" onFinish={handleSubmit} size="small">
-                <Form.Item
-                    label="Make"
-                    name="make"
-                    rules={[{ required: true, message: 'Please select the make' }]}
-                >
-                    <Select
-                        placeholder="Select a make"
-                        onChange={handleMakeChange}
-                        value={selectedMake}
-                    >
-                        {Object.keys(vehicleMakersModels).map((make) => (
-                            <Select.Option key={make} value={make}>
-                                {make}
-                            </Select.Option>
-                        ))}
-                    </Select>
-                </Form.Item>
-                <Form.Item
-                    label="Model"
-                    name="model"
-                    rules={[{ required: true, message: 'Please select the model' }]}
-                >
-                    <Select
-                        placeholder="Select a model"
-                        value={selectedModel}
-                        onChange={handleModelChange}
-                        disabled={!selectedMake}
-                    >
-                        {availableModels.map((model) => (
-                            <Select.Option key={model} value={model}>
-                                {model}
-                            </Select.Option>
-                        ))}
-                    </Select>
-                </Form.Item>
-                <Form.Item label="Year" name="year" rules={[{ required: true, message: 'Please select the year' }]}>
-                    <Select placeholder="Select a year">
-                        {years.map((year) => (
-                            <Select.Option key={year} value={year}>
-                                {year}
-                            </Select.Option>
-                        ))}
-                    </Select>
-                </Form.Item>
-                <Form.Item label="VIN" name="vin" rules={[{ required: true, message: 'Please enter the VIN' }]}>
-                    <Input style={{ textTransform: 'uppercase' }} maxLength={17} />
-                </Form.Item>
-                <Form.Item
-                    label="Mileage"
-                    name="mileage"
-                    rules={[{ required: true, message: 'Please enter mileage' }]}
-                >
-                    <InputNumber />
-                </Form.Item>
-                <Form.Item
-                    label="Expected Bid"
-                    name="expectedBid"
-                    rules={[{ required: true, message: 'Please enter the expected bid' }]}
-                >
-                    <InputNumber />
-                </Form.Item>
-                <Form.Item label="Damaged" name="damaged" valuePropName="checked">
-                    <Switch />
-                </Form.Item>
-                <Form.Item>
-                    <label htmlFor="imageInput">Select images from your PC:</label>
-                    <input
-                        type="file"
-                        id="imageInput"
-                        accept="image/*"
-                        multiple
-                        onChange={handleImageChange}
+        <Container maxWidth="md">
+            {/* Wrap the JSX elements in a parent element */}
+            <Box display="flex" flexDirection="row" alignItems="flex-start" justifyContent="space-between">
+                {/* Left Section - Vehicle Information */}
+                <Box flex="1">
+                    <TextField
+                        label="Make"
+                        name="make"
+                        value={vehicleInfo.make}
+                        onChange={handleInputChange}
+                        fullWidth
                         required
+                        margin="normal"
                     />
-                    <br />
-                    {previewUrls.length > 0 ? (
-                        <div>
-                            <h3>Selected Image Previews:</h3>
-                            {previewUrls.map((url, index) => (
-                                <img key={index} src={url} alt={`Selected ${index + 1}`} style={{ maxWidth: '300px' }} />
-                            ))}
-                        </div>
-                    ) : (
-                        <p style={{ color: 'red' }}>Please select at least one image.</p>
+                    <TextField
+                        label="Model"
+                        name="model"
+                        value={vehicleInfo.model}
+                        onChange={handleInputChange}
+                        fullWidth
+                        required
+                        margin="normal"
+                    />
+                    <TextField
+                        label="Mileage"
+                        name="mileage"
+                        value={vehicleInfo.mileage}
+                        onChange={handleInputChange}
+                        fullWidth
+                        required
+                        margin="normal"
+                    />
+                    <TextField
+                        label="VIN"
+                        name="vin"
+                        value={vehicleInfo.vin}
+                        onChange={handleInputChange}
+                        fullWidth
+                        required
+                        margin="normal"
+                    />
+                    <TextField
+                        label="Year"
+                        name="year"
+                        value={vehicleInfo.year}
+                        onChange={handleInputChange}
+                        fullWidth
+                        required
+                        margin="normal"
+                    />
+                    <TextField
+                        label="Expected Bid"
+                        name="expectedBid"
+                        value={vehicleInfo.expectedBid}
+                        onChange={handleInputChange}
+                        fullWidth
+                        required
+                        margin="normal"
+                    />
+                    <FormControlLabel
+                        control={
+                            <Checkbox
+                                checked={vehicleInfo.damaged}
+                                onChange={handleInputChange}
+                                name="damaged"
+                            />
+                        }
+                        label="Damaged"
+                    />
+                </Box>
+
+                {/* Right Section - File Input and Previews */}
+                <Box flex="1" display="flex" flexDirection="column" alignItems="center" justifyContent="center">
+                    {/* File input */}
+                    <input
+                        id="file"
+                        type="file"
+                        multiple
+                        style={{display: "none"}}
+                        onChange={handleFileChange}
+                    />
+                    <label htmlFor="file">
+                        <Button variant="contained" component="span">
+                            Choose Files
+                        </Button>
+                    </label>
+                    {filePreviews.length > 0 && (
+                        <Box textAlign="center" mt={2}>
+                            {/* Conditionally render success message */}
+                            {success ? (
+                                <Typography variant="h6">Vehicle added successfully!</Typography>
+                            ) : (
+                                <Button
+                                    variant="contained" // Use variant instead of type
+                                    onClick={handleAddVehicle}
+                                    disabled={loading} // Disable the button when loading
+                                >
+                                    Add Vehicle
+                                </Button>
+                            )}
+                        </Box>
                     )}
-                </Form.Item>
-                <Form.Item>
-                    <Button type="primary" htmlType="submit" loading={loading}>
-                        Add Vehicle
-                    </Button>
-                </Form.Item>
-            </Form>
+                </Box>
+            </Box>
+        </Container>
     );
 };
 

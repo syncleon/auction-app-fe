@@ -7,13 +7,7 @@ import LoginForm from "../components/LoginForm";
 
 const AddVehicle = () => {
     return (
-        <Container maxWidth="xs">
-            <Grid container justifyContent="center" alignItems="center" style={{ minHeight: '100vh' }}>
-                <Grid item xs={12}>
-                  <AddVehicleForm/>
-                </Grid>
-            </Grid>
-        </Container>
+        <AddVehicleForm/>
     );
 };
 
