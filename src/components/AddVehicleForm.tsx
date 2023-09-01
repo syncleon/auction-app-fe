@@ -57,7 +57,6 @@ interface VehicleInfo {
 }
 
 const yearOptions = Array.from({ length: 50 }, (_, index) => (new Date().getFullYear() - index).toString());
-const makersModels = vehicleMakersModels
 
 const AddVehicleForm: React.FC = () => {
     const [files, setFiles] = useState<FileList | null>(null);
@@ -75,6 +74,18 @@ const AddVehicleForm: React.FC = () => {
         expectedBid: "",
         damaged: false,
     });
+
+    const isAddButtonDisabled = () => {
+        return (
+            !vehicleInfo.make ||
+            !vehicleInfo.model ||
+            !vehicleInfo.mileage ||
+            !vehicleInfo.vin ||
+            !vehicleInfo.year ||
+            !vehicleInfo.expectedBid ||
+            selectedFiles.length === 0
+        );
+    };
 
     const isMakeSelected = !!vehicleInfo.make; // Check if a make is selected
 
@@ -367,8 +378,6 @@ const AddVehicleForm: React.FC = () => {
                     </label>
                     {filePreviews.length > 0 ? (
                         <div>
-                            <Typography variant="h6">Vehicle Images</Typography>
-                            <div>
                                 {filePreviews.map((preview, index) => (
                                     <FilePreview
                                         key={index}
@@ -377,21 +386,21 @@ const AddVehicleForm: React.FC = () => {
                                         onDelete={() => handleDeleteImage(index)}
                                     />
                                 ))}
-                            </div>
-                            {success ? (
-                                <Typography variant="h6">Vehicle added successfully!</Typography>
-                            ) : (
-                                <Button
-                                    variant="contained"
-                                    onClick={handleAddVehicle}
-                                    disabled={loading}
-                                >
-                                    Add Vehicle
-                                </Button>
-                            )}
                         </div>
                     ) : (
                         <Typography variant="h6">Select at least one image</Typography>
+                    )}
+                    {success ? (
+                        <Typography variant="h6">Vehicle added successfully!</Typography>
+                    ) : (
+                        <Button
+                            variant="contained"
+                            onClick={handleAddVehicle}
+                            disabled={loading || isAddButtonDisabled()} // Disable the button based on the condition
+                            style={{ marginTop: "10px" }}
+                        >
+                            Add Vehicle
+                        </Button>
                     )}
                 </Box>
             </Box>
