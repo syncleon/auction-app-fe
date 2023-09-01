@@ -7,7 +7,7 @@ import LoginForm from "../components/LoginForm";
 const Register:FC = () => {
     return (
         <Container maxWidth="xs">
-            <Grid container justifyContent="center" alignItems="center" style={{ minHeight: '100vh' }}>
+            <Grid container justifyContent="center" alignItems="center">
                 <Grid item xs={12}>
                     <RegisterForm />
                 </Grid>

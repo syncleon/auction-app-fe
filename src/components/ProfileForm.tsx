@@ -41,18 +41,14 @@ const VehicleCard: React.FC<VehicleCardProps> = ({ vehicle, onDeleteVehicle, onI
             component="img"
             alt={`${vehicle.make} ${vehicle.model}`}
             width="100%"
-            image={`http://localhost:63958/${vehicle.images[0]}`}
+            image={`http://localhost:8080/api/v1/vehicles/display/${vehicle.images[0]}`}
             onClick={() => onItemClick(vehicle.id)}
             style={{ objectFit: 'contain' }}
         />
         <CardContent>
-            <Typography variant="h6">
-                {vehicle.make} {vehicle.model}
-            </Typography>
-            <Typography variant="body2">Year: {vehicle.year}</Typography>
+            <Typography variant="h6">{vehicle.year}, {vehicle.make} {vehicle.model}</Typography>
             <Typography variant="body2">Mileage: {vehicle.mileage}</Typography>
             <Typography variant="body2">Expected Bid: {vehicle.expectedBid}</Typography>
-            <Typography variant="body2">Seller: {vehicle.sellerUsername}</Typography>
             <button onClick={() => onDeleteVehicle(vehicle.id)} className="delete-button">
                 Delete
             </button>
@@ -152,7 +148,9 @@ const ProfileForm: React.FC = () => {
             </Grid>
             <Grid item xs={10}>
                 {selectedTab === 0 && (
-                    <VehicleListing vehicles={vehicles} onDeleteVehicle={handleDeleteVehicle} onItemClick={handleClickOnImage} />
+                    <VehicleListing vehicles={vehicles}
+                                    onDeleteVehicle={handleDeleteVehicle}
+                                    onItemClick={handleClickOnImage} />
                 )}
 
                 {selectedTab === 1 && (

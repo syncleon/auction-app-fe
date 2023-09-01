@@ -41,18 +41,21 @@ const HomeForm = () => {
                                 alt={`${vehicle.make} ${vehicle.model}`}
                                 width="100%"
                                 // Use imageInstance for loading images
-                                image={`http://localhost:63958/${vehicle.images[0]}`}
+                                image={`http://localhost:8080/api/v1/vehicles/display/${vehicle.images[0]}`}
                                 onClick={() => handleClickOnImage(vehicle.id)}
                                 style={{ objectFit: 'contain' }}
                                 onError={(e) => {
                                 }}
                             />
                             <CardContent>
-                                <Typography variant="h6">{vehicle.make} {vehicle.model}</Typography>
-                                <Typography variant="body2">Year: {vehicle.year}</Typography>
-                                <Typography variant="body2">Mileage: {vehicle.mileage}</Typography>
-                                <Typography variant="body2">Expected Bid: {vehicle.expectedBid}</Typography>
-                                <Typography variant="body2">Seller: {vehicle.sellerUsername}</Typography>
+                                <Typography variant="h6">
+                                    {vehicle.year}, {vehicle.make} {vehicle.model}</Typography>
+                                <Typography variant="body2">
+                                    Owner: {vehicle.sellerUsername}
+                                </Typography>
+                                <Typography variant="body2">
+                                    Expected Price: {vehicle.expectedBid} $
+                                </Typography>
                             </CardContent>
                         </Card>
                     </Grid>

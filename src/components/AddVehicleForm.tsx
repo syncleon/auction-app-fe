@@ -1,17 +1,50 @@
-import React, { useState, useEffect } from "react";
-import {
-    Button,
-    Container,
-    Typography,
-    Box,
-    TextField,
-    FormControlLabel,
-    Checkbox,
-} from "@mui/material";
-import { apiInstance } from "../axios-instance";
+import React, { useState, useEffect, ChangeEvent } from "react";
+import { Autocomplete, Button, Container, Typography, Box, TextField, FormControlLabel, Checkbox, Dialog, DialogTitle, DialogContent, DialogActions } from "@mui/material";
 import { message } from "antd";
 import { RouteNames } from "../routes";
 import { useHistory } from "react-router-dom";
+import { apiInstance } from "../axios-instance";
+import vehicleMakersModels from "../models/VehicleMakersModels";
+
+interface FilePreviewProps {
+    preview: string;
+    onClick: () => void;
+    onDelete: () => void;
+}
+
+const FilePreview: React.FC<FilePreviewProps> = ({ preview, onClick, onDelete }) => (
+    <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+        <img
+            src={preview}
+            alt="File Preview"
+            style={{ maxWidth: '200px', maxHeight: '200px', margin: '5px', cursor: 'pointer' }}
+            onClick={onClick}
+        />
+        <Button variant="contained" color="secondary" onClick={onDelete}>Delete</Button>
+    </div>
+);
+
+interface PreviewDialogProps {
+    open: boolean;
+    onClose: () => void;
+    selectedPreview: string | null;
+}
+
+const PreviewDialog: React.FC<PreviewDialogProps> = ({ open, onClose, selectedPreview }) => (
+    <Dialog open={open} onClose={onClose} maxWidth="lg">
+        <DialogTitle>Full-Size Preview</DialogTitle>
+        <DialogContent>
+            {selectedPreview && (
+                <img src={selectedPreview} alt="Full-Size Preview" style={{ width: '100%' }} />
+            )}
+        </DialogContent>
+        <DialogActions>
+            <Button onClick={onClose} color="primary">
+                Close
+            </Button>
+        </DialogActions>
+    </Dialog>
+);
 
 interface VehicleInfo {
     make: string;
@@ -23,12 +56,16 @@ interface VehicleInfo {
     damaged: boolean;
 }
 
+const yearOptions = Array.from({ length: 50 }, (_, index) => (new Date().getFullYear() - index).toString());
+const makersModels = vehicleMakersModels
+
 const AddVehicleForm: React.FC = () => {
     const [files, setFiles] = useState<FileList | null>(null);
+    const [selectedFiles, setSelectedFiles] = useState<{ file: File, preview: string }[]>([]);
     const [filePreviews, setFilePreviews] = useState<string[]>([]);
     const [loading, setLoading] = useState(false);
-    const [success, setSuccess] = useState(false); // Add success state
-    const history = useHistory();
+    const [success, setSuccess] = useState(false);
+    const [modelOptions, setModelOptions] = useState<string[]>([]);
     const [vehicleInfo, setVehicleInfo] = useState<VehicleInfo>({
         make: "",
         model: "",
@@ -39,39 +76,117 @@ const AddVehicleForm: React.FC = () => {
         damaged: false,
     });
 
-    const handleCreateVehicle = async (formData: FormData) => {
-        if (files) {
+    const isMakeSelected = !!vehicleInfo.make; // Check if a make is selected
+
+    const [previewOpen, setPreviewOpen] = useState(false);
+    const [selectedPreview, setSelectedPreview] = useState<string | null>(null);
+    const history = useHistory();
+
+    const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files) {
+            setFiles(e.target.files);
+        }
+    };
+
+    const handleInputChange = (e: ChangeEvent<HTMLInputElement>, type: string = "text") => {
+        const { name, value, checked } = e.target;
+
+        setVehicleInfo((prevInfo) => ({
+            ...prevInfo,
+            [name]: type === "checkbox" ? checked : value,
+        }));
+    };
+
+    const handleMakeChange = (event: React.ChangeEvent<{}>, newValue: string | null) => {
+        if (newValue !== null) {
+            const selectedMake = newValue;
+            setVehicleInfo({
+                ...vehicleInfo,
+                make: selectedMake,
+                model: "", // Clear the selected model when the make changes
+            });
+            // Update the model options based on the selected make
+            setModelOptions(vehicleMakersModels[selectedMake] || []);
+        } else {
+            // Handle the case when the make is cleared (optional)
+            setVehicleInfo({
+                ...vehicleInfo,
+                make: "",
+            });
+            setModelOptions([]);
+        }
+    };
+
+    const handleModelChange = (event: React.ChangeEvent<{}>, newValue: string | null) => {
+        if (newValue !== null) {
+            setVehicleInfo({
+                ...vehicleInfo,
+                model: newValue,
+            });
+        }
+    };
+
+    const handleYearChange = (event: React.ChangeEvent<{}>, newValue: string | null) => {
+        if (newValue !== null) {
+            setVehicleInfo({
+                ...vehicleInfo,
+                year: newValue,
+            });
+        }
+    };
+
+    const handleVinChange = (event: ChangeEvent<HTMLInputElement>) => {
+        const newValue = event.target.value.slice(0, 17);
+
+        setVehicleInfo({
+            ...vehicleInfo,
+            vin: newValue,
+        });
+    };
+
+    const openPreviewDialog = (preview: string) => {
+        setSelectedPreview(preview);
+        setPreviewOpen(true);
+    };
+
+    const closePreviewDialog = () => {
+        setSelectedPreview(null);
+        setPreviewOpen(false);
+    };
+
+    const submitCreateVehicle = async () => {
+        if (selectedFiles.length > 0) {
             const formData = new FormData();
 
-            for (let i = 0; i < files.length; i++) {
-                formData.append("images", files[i]);
+            for (let i = 0; i < selectedFiles.length; i++) {
+                formData.append("images", selectedFiles[i].file);
             }
 
-            formData.append(
-                "payload",
-                JSON.stringify({
-                    make: vehicleInfo.make,
-                    model: vehicleInfo.model,
-                    mileage: vehicleInfo.mileage,
-                    vin: vehicleInfo.vin,
-                    year: vehicleInfo.year,
-                    expectedBid: vehicleInfo.expectedBid,
-                })
-            );
+            const payloadData = {
+                make: vehicleInfo.make,
+                model: vehicleInfo.model,
+                mileage: vehicleInfo.mileage,
+                vin: vehicleInfo.vin,
+                year: vehicleInfo.year,
+                expectedBid: vehicleInfo.expectedBid,
+            };
+
+            formData.append("payload", new Blob([JSON.stringify(payloadData)], { type: "application/json" }));
 
             try {
                 const token = localStorage.getItem('token');
                 const headers = {
                     Authorization: `Bearer ${token}`,
                     "Content-Type": "multipart/form-data"
-                }
-                await apiInstance.post('vehicles', formData, {headers});
+                };
+
+                await apiInstance.post('vehicles', formData, { headers });
                 setLoading(false);
-                setSuccess(true); // Set success to true
-                message.success('Car vehicle created successfully');
-                // No need to redirect here, we'll redirect after rendering the success message
+                setSuccess(true);
+                message.success("Car vehicle created successfully");
+                history.push(RouteNames.PROFILE);
             } catch (error) {
-                console.error('Error:', error);
+                console.error("Error:", error);
                 setLoading(false);
             }
         }
@@ -80,6 +195,7 @@ const AddVehicleForm: React.FC = () => {
     useEffect(() => {
         if (files) {
             const previews: string[] = [];
+            const selected: { file: File, preview: string }[] = [];
 
             for (let i = 0; i < files.length; i++) {
                 const file = files[i];
@@ -95,174 +211,192 @@ const AddVehicleForm: React.FC = () => {
                 };
 
                 reader.readAsDataURL(file);
+
+                selected.push({ file, preview: URL.createObjectURL(file) });
             }
+
+            setSelectedFiles(selected);
         } else {
             setFilePreviews([]);
+            setSelectedFiles([]);
         }
     }, [files]);
 
-    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target.files) {
-            setFiles(e.target.files);
-        }
-    };
-
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const {name, value, type, checked} = e.target;
-
-        setVehicleInfo((prevInfo) => ({
-            ...prevInfo,
-            [name]: type === "checkbox" ? checked : value,
-        }));
-    };
-
-    const handleUpload = async () => {
-        // Include vehicleInfo in your upload logic as needed
-
-        if (files) {
-
-            const formData = new FormData();
-
-            [...files].forEach((file) => {
-                formData.append("files", file);
-            });
-
-            try {
-                const result = await fetch("https://httpbin.org/post", {
-                    method: "POST",
-                    body: formData,
-                });
-
-                const data = await result.json();
-
-                console.log(data);
-            } catch (error) {
-                console.error(error);
-            }
-        }
-    };
-
     const handleAddVehicle = async () => {
-        // Call handleCreateVehicle and pass the formData
         if (files) {
-            const formData = new FormData();
-
-            // ... (same code as before)
-
             try {
-                await handleCreateVehicle(formData); // Call handleCreateVehicle here
-                history.push(RouteNames.PROFILE); // Redirect after success
+                await submitCreateVehicle();
             } catch (error) {
                 console.error(error);
             }
         }
     };
+
+    const handleDeleteImage = (index: number) => {
+        const updatedPreviews = [...filePreviews];
+        updatedPreviews.splice(index, 1);
+        setFilePreviews(updatedPreviews);
+
+        const updatedSelectedFiles = [...selectedFiles];
+        updatedSelectedFiles.splice(index, 1);
+        setSelectedFiles(updatedSelectedFiles);
+    };
+
+
 
     return (
-        <Container maxWidth="md">
-            {/* Wrap the JSX elements in a parent element */}
-            <Box display="flex" flexDirection="row" alignItems="flex-start" justifyContent="space-between">
-                {/* Left Section - Vehicle Information */}
-                <Box flex="1">
-                    <TextField
-                        label="Make"
-                        name="make"
+        <Container maxWidth="md" >
+            <Box display="flex"
+                 flexDirection="row"
+                 alignItems="flex-start"
+                 justifyContent="space-between">
+                <Box
+                    flex="1">
+                    <Autocomplete
+                        id="make-select"
+                        options={Object.keys(vehicleMakersModels)}
                         value={vehicleInfo.make}
-                        onChange={handleInputChange}
-                        fullWidth
-                        required
-                        margin="normal"
+                        onChange={handleMakeChange}
+                        renderInput={(params) => (
+                            <TextField {...params}
+                                       label="Make"
+                                       variant="outlined"
+                                       fullWidth />
+                        )}
+                        style={{ marginBottom: '16px', marginTop: '10px' }}
                     />
-                    <TextField
-                        label="Model"
-                        name="model"
+                    <Autocomplete
+                        id="model-select"
+                        options={modelOptions}
                         value={vehicleInfo.model}
-                        onChange={handleInputChange}
-                        fullWidth
-                        required
-                        margin="normal"
+                        onChange={handleModelChange}
+                        renderInput={(params) => (
+                            <TextField
+                                {...params}
+                                label="Model"
+                                variant="outlined"
+                                fullWidth
+                                disabled={!isMakeSelected} // Disable the field if make is not selected
+                            />
+                        )}
+                        style={{ marginBottom: '16px' }}
+                        disabled={!isMakeSelected} // Disable the whole Autocomplete component if make is not selected
+                    />
+                    <Autocomplete
+                        id="year-select"
+                        options={yearOptions}
+                        value={vehicleInfo.year}
+                        onChange={handleYearChange}
+                        renderInput={(params) => (
+                            <TextField
+                                {...params}
+                                label="Year"
+                                variant="outlined"
+                                fullWidth
+                            />
+                        )}
+                        style={{ marginBottom: '16px' }}
                     />
                     <TextField
-                        label="Mileage"
+                        label="Mileage (km)"
                         name="mileage"
                         value={vehicleInfo.mileage}
                         onChange={handleInputChange}
                         fullWidth
                         required
-                        margin="normal"
+                        inputProps={{
+                            maxLength: "8"
+                        }}
+                        style={{ marginBottom: '16px' }}
                     />
                     <TextField
                         label="VIN"
-                        name="vin"
+                        variant="outlined"
+                        fullWidth
+                        required
                         value={vehicleInfo.vin}
-                        onChange={handleInputChange}
-                        fullWidth
-                        required
-                        margin="normal"
+                        onChange={handleVinChange}
+                        inputProps={{
+                            maxLength: 17
+                        }}
+                        style={{ marginBottom: '16px' }}
                     />
                     <TextField
-                        label="Year"
-                        name="year"
-                        value={vehicleInfo.year}
-                        onChange={handleInputChange}
-                        fullWidth
-                        required
-                        margin="normal"
-                    />
-                    <TextField
-                        label="Expected Bid"
+                        label="Expected Bid ($)"
                         name="expectedBid"
                         value={vehicleInfo.expectedBid}
                         onChange={handleInputChange}
                         fullWidth
                         required
-                        margin="normal"
+                        style={{ marginBottom: '16px' }}
                     />
                     <FormControlLabel
                         control={
                             <Checkbox
                                 checked={vehicleInfo.damaged}
-                                onChange={handleInputChange}
+                                onChange={(e) => handleInputChange(e, "checkbox")}
                                 name="damaged"
+                                color="primary"
                             />
                         }
                         label="Damaged"
                     />
                 </Box>
-
-                {/* Right Section - File Input and Previews */}
-                <Box flex="1" display="flex" flexDirection="column" alignItems="center" justifyContent="center">
-                    {/* File input */}
+                <Box
+                    flex="1"
+                    display="flex"
+                    flexDirection="column"
+                    alignItems="center"
+                    justifyContent="center"
+                >
                     <input
                         id="file"
                         type="file"
                         multiple
-                        style={{display: "none"}}
+                        style={{ display: "none" }}
                         onChange={handleFileChange}
                     />
                     <label htmlFor="file">
-                        <Button variant="contained" component="span">
-                            Choose Files
+                        <Button
+                            variant="contained"
+                            component="span"
+                            style={{ marginBottom: '16px', marginTop: '10px' }}
+                        >
+                            Select Images
                         </Button>
                     </label>
-                    {filePreviews.length > 0 && (
-                        <Box textAlign="center" mt={2}>
-                            {/* Conditionally render success message */}
+                    {filePreviews.length > 0 ? (
+                        <div>
+                            <Typography variant="h6">Vehicle Images</Typography>
+                            <div>
+                                {filePreviews.map((preview, index) => (
+                                    <FilePreview
+                                        key={index}
+                                        preview={preview}
+                                        onClick={() => openPreviewDialog(preview)}
+                                        onDelete={() => handleDeleteImage(index)}
+                                    />
+                                ))}
+                            </div>
                             {success ? (
                                 <Typography variant="h6">Vehicle added successfully!</Typography>
                             ) : (
                                 <Button
-                                    variant="contained" // Use variant instead of type
+                                    variant="contained"
                                     onClick={handleAddVehicle}
-                                    disabled={loading} // Disable the button when loading
+                                    disabled={loading}
                                 >
                                     Add Vehicle
                                 </Button>
                             )}
-                        </Box>
+                        </div>
+                    ) : (
+                        <Typography variant="h6">Select at least one image</Typography>
                     )}
                 </Box>
             </Box>
+
+            <PreviewDialog open={previewOpen} onClose={closePreviewDialog} selectedPreview={selectedPreview} />
         </Container>
     );
 };

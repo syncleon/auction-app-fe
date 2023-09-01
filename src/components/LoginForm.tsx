@@ -33,9 +33,10 @@ const LoginForm: FC = () => {
             style={{
                 display: 'flex',
                 flexDirection: 'column',
-                alignItems: 'center',
+                marginTop: "50%"
             }}
         >
+            <h1>Sign In</h1>
             <TextField
                 label="Username"
                 value={username}
@@ -67,10 +68,14 @@ const LoginForm: FC = () => {
             >
                 {isLoading ? <CircularProgress size={24} color="inherit" /> : 'Login'}
             </Button>
-            <Typography>
+            <Typography
+                style={{ fontSize: '15px' }}>
                 No account?{' '}
-                <Link component="button" variant="body2" onClick={handleSignUpClick}>
-                    Create it!
+                <Link component="button"
+                      variant="body2"
+                      onClick={handleSignUpClick}
+                      style={{ fontSize: '16px' }}>
+                    Create it
                 </Link>
             </Typography>
         </form>

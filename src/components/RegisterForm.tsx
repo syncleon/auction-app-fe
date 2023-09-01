@@ -32,9 +32,10 @@ const RegisterForm: FC = () => {
             style={{
                 display: 'flex',
                 flexDirection: 'column',
-                alignItems: 'center',
+                marginTop: "50%"
             }}
         >
+            <h1>Register account</h1>
             <TextField
                 label="Username"
                 value={username}
@@ -75,10 +76,14 @@ const RegisterForm: FC = () => {
             >
                 {isLoading ? <CircularProgress size={24} color="inherit"/> : 'Register'}
             </Button>
-            <Typography>
-                Have an account?{' '}
-                <Link component="button" variant="body2" onClick={handleLoginClick}>
-                    Perform login!
+            <Typography
+                style={{ fontSize: '15px' }}>
+                Already have an account?{' '}
+                <Link component="button"
+                      variant="body2"
+                      onClick={handleLoginClick}
+                      style={{ fontSize: '16px' }}>
+                    Sign In
                 </Link>
             </Typography>
         </form>
