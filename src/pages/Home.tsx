@@ -5,7 +5,7 @@ import {Container} from "@mui/material";
 
 const Home:FC = () => {
     return (
-        <HomeForm/>
+        <HomeForm />
     );
 }
 

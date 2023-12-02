@@ -39,7 +39,7 @@ const VehicleDetailsForm = () => {
                     <div>
                         {vehicle.images.map((image, index) => (
                             <img key={index}
-                                 src={`http://localhost:8080/api/v1/vehicles/display/${image}`}
+                                 src={`http://localhost:8080/api/v1/vehicles/display/${vehicle.id}/${image}`}
                                  alt={`Vehicle ${index + 1}`} />
                         ))}
                     </div>

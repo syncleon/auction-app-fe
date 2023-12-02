@@ -41,7 +41,7 @@ const VehicleCard: React.FC<VehicleCardProps> = ({ vehicle, onDeleteVehicle, onI
             component="img"
             alt={`${vehicle.make} ${vehicle.model}`}
             width="100%"
-            image={`http://localhost:8080/api/v1/vehicles/display/${vehicle.images[0]}`}
+            image={`http://localhost:8080/api/v1/vehicles/display/${vehicle.id}/${vehicle.images[0]}`}
             onClick={() => onItemClick(vehicle.id)}
             style={{ objectFit: 'contain' }}
         />
