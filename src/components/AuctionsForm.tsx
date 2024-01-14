@@ -19,7 +19,22 @@ const AuctionsForm: React.FC = () => {
         history.push(RouteNames.AUCTION_DETAILS.replace(':id', String(auctionId)));
     };
 
-    useEffect(() => {
+    const calculateTimeLeft = (endTime: number): string => {
+        const currentTime = new Date().getTime();
+        const remainingTime = endTime - currentTime;
+
+        if (remainingTime <= 0) {
+            return 'Auction ended';
+        }
+
+        const minutes = Math.floor((remainingTime / 1000 / 60) % 60);
+        const hours = Math.floor((remainingTime / (1000 * 60 * 60)) % 24);
+        const days = Math.floor(remainingTime / (1000 * 60 * 60 * 24));
+
+        return `${days}d ${hours}h ${minutes}m`;
+    };
+
+    const fetchAuctions = () => {
         apiInstance
             .get('auctions')
             .then((response) => {
@@ -29,28 +44,14 @@ const AuctionsForm: React.FC = () => {
             .catch((error) => {
                 console.error('Error fetching auctions:', error);
             });
-    }, []);
-
-    const calculateTimeLeft = (endTime: number) => {
-        const now = new Date().getTime();
-        const timeLeft = endTime - now;
-        const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
-        const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
-        const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
-
-        return `${days}d ${hours}h ${minutes}m ${seconds}s`;
     };
 
     useEffect(() => {
-        const intervalId = setInterval(() => {
-            setAuctions((prevAuctions) =>
-                prevAuctions.map((auction) => ({
-                    ...auction,
-                    timeLeft: calculateTimeLeft(Number(auction.endTime)),
-                }))
-            );
-        }, 1000);
+        fetchAuctions();
+    }, []);
+
+    useEffect(() => {
+        const intervalId = setInterval(fetchAuctions, 30000); // Fetch every 30 seconds
 
         return () => clearInterval(intervalId);
     }, []);
@@ -88,7 +89,7 @@ const AuctionsForm: React.FC = () => {
                                     Owner: {auction.auctionOwner}
                                 </Typography>
                                 <Typography variant="subtitle1" color="textSecondary">
-                                    Time Left: {auction.timeLeft}
+                                    Time Left: {calculateTimeLeft(Number(auction.endTime))}
                                 </Typography>
                                 <Typography variant="subtitle1" color="textSecondary">
                                     Highest Bid: ${auction.currentMaxBid}
