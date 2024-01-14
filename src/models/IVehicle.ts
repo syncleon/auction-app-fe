@@ -10,6 +10,7 @@ export interface Vehicle {
     sellerId: number;
     sellerUsername: string;
     images: string[];
-    deleted: boolean
+    deleted: boolean,
+    onSale: boolean
 }
 

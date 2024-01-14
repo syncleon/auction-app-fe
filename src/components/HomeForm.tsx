@@ -33,18 +33,51 @@ const HomeForm: React.FC = () => {
                     <Grid key={index} item xs={12} sm={6} md={4} lg={4}>
                         <Card
                             onClick={() => handleClickOnImage(vehicle.id)}
-                            sx={{ maxWidth: 768, maxHeight: 412, height: '100%', display: 'flex', flexDirection: 'column' }}
+                            sx={{
+                                maxWidth: 500,
+                                height: '100%',
+                                display: 'flex',
+                                flexDirection: 'column'
+                            }}
                         >
                             <CardMedia
                                 component="img"
                                 alt={`${vehicle.year} ${vehicle.make} ${vehicle.model}`}
-                                height="300"
+                                height="100%"
                                 image={`http://localhost:8080/api/v1/vehicles/display/${vehicle.id}/${vehicle.images[0]}`}
                             />
                             <CardContent sx={{ flex: '1 0 auto' }}>
                                 <Typography variant="h6">
                                     {`${vehicle.year} ${vehicle.make} ${vehicle.model}`}
                                 </Typography>
+                                <Typography variant="subtitle1" color="textSecondary">
+                                    Owner: {vehicle.sellerUsername}
+                                </Typography>
+                                {/* Green dot for onSale === true */}
+                                {vehicle.onSale ? (
+                                    <div
+                                        style={{
+                                            width: 10,
+                                            height: 10,
+                                            borderRadius: '50%',
+                                            backgroundColor: 'green',
+                                            marginRight: 8,
+                                            display: 'inline-block',
+                                        }}
+                                    ></div>
+                                ) : (
+                                    // Red dot for onSale === false
+                                    <div
+                                        style={{
+                                            width: 10,
+                                            height: 10,
+                                            borderRadius: '50%',
+                                            backgroundColor: 'red',
+                                            marginRight: 8,
+                                            display: 'inline-block',
+                                        }}
+                                    ></div>
+                                )}
                             </CardContent>
                         </Card>
                     </Grid>

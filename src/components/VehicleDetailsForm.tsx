@@ -35,6 +35,7 @@ const VehicleDetailsForm = () => {
                     <p>Expected Bid: {vehicle.expectedBid}</p>
                     <p>Damaged: {vehicle.damaged ? 'Yes' : 'No'}</p>
                     <p>Seller: {vehicle.sellerUsername}</p>
+                    <p>OnSale: {vehicle.onSale}</p>
                     <h3>Images:</h3>
                     <div>
                         {vehicle.images.map((image, index) => (

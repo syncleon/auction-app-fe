@@ -17,6 +17,10 @@ const Navbar: FC = () => {
         history.push(RouteNames.ADD);
     };
 
+    const handleAuctionClick = () => {
+        history.push(RouteNames.AUCTIONS)
+    };
+
     const handleLoginClick = () => {
         history.push(RouteNames.LOGIN);
     };
@@ -61,8 +65,17 @@ const Navbar: FC = () => {
                     />
                 </a>
                 {isAuth ? (
-                    <>
                         <div>
+                            <Button
+                                color="inherit"
+                                onClick={handleAuctionClick}
+                                sx={{
+                                    color: 'black',
+                                    textTransform: 'none',
+                                    border: '1px solid blue'
+                                }}>
+                                Active Auctions
+                            </Button>
                             <Button
                                 color="inherit"
                                 onClick={handleAddClick}
@@ -92,10 +105,18 @@ const Navbar: FC = () => {
                                 Logout
                             </Button>
                         </div>
-                    </>
                 ) : (
-                    <>
                         <div>
+                            <Button
+                                color="inherit"
+                                onClick={handleAuctionClick}
+                                sx={{
+                                    color: 'black',
+                                    textTransform: 'none',
+                                    border: '1px solid blue'
+                                }}>
+                                Active Auctions
+                            </Button>
                             <Button
                                 color="inherit"
                                 onClick={handleLoginClick}
@@ -116,7 +137,6 @@ const Navbar: FC = () => {
                                 Login
                             </Button>
                         </div>
-                    </>
                 )}
             </Toolbar>
         </AppBar>

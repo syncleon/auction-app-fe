@@ -98,6 +98,8 @@ const ProfileForm: React.FC = () => {
                     username: response.data.username,
                     email: response.data.email,
                     vehicles: response.data.vehicles,
+                    auctions: response.data.auctions,
+                    bid: response.data.bids
                 };
                 setUser(userData);
                 setVehicles(userData.vehicles);

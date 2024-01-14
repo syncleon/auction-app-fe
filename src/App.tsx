@@ -10,7 +10,7 @@ const App:FC = () => {
     const {setUser, setIsAuth} = useActions()
 
     const containerStyle = {
-        maxWidth: '70%', // Set your desired max width here
+        maxWidth: '60%', // Set your desired max width here
     };
 
     useEffect(() =>
