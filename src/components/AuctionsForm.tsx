@@ -19,6 +19,7 @@ const AuctionsForm: React.FC = () => {
         history.push(RouteNames.AUCTION_DETAILS.replace(':id', String(auctionId)));
     };
 
+
     const calculateTimeLeft = (endTime: number): string => {
         const currentTime = new Date().getTime();
         const remainingTime = endTime - currentTime;
@@ -27,11 +28,23 @@ const AuctionsForm: React.FC = () => {
             return 'Auction ended';
         }
 
+        const seconds = Math.floor((remainingTime / 1000) % 60);
         const minutes = Math.floor((remainingTime / 1000 / 60) % 60);
         const hours = Math.floor((remainingTime / (1000 * 60 * 60)) % 24);
         const days = Math.floor(remainingTime / (1000 * 60 * 60 * 24));
 
-        return `${days}d ${hours}h ${minutes}m`;
+        const displayMinutes = minutes < 10 ? `0${minutes}` : `${minutes}`;
+        const displaySeconds = seconds < 10 ? `0${seconds}` : `${seconds}`;
+
+        if (days > 1) {
+            return `${days} days`;
+        } else if (days === 1) {
+            return `${days} day`;
+        } else if (hours > 0) {
+            return `${hours}:${displayMinutes}:${displaySeconds}`;
+        } else {
+            return `${displayMinutes}:${displaySeconds}`;
+        }
     };
 
     const fetchAuctions = () => {
@@ -51,7 +64,7 @@ const AuctionsForm: React.FC = () => {
     }, []);
 
     useEffect(() => {
-        const intervalId = setInterval(fetchAuctions, 30000); // Fetch every 30 seconds
+        const intervalId = setInterval(fetchAuctions, 1000);
 
         return () => clearInterval(intervalId);
     }, []);
@@ -59,7 +72,7 @@ const AuctionsForm: React.FC = () => {
     return (
         <Grid container spacing={2}>
             {auctions
-                .filter((auction) => auction.auctionStatus !== 'CREATED')
+                .filter((auction) => !auction.vehicle.deleted)
                 .map((auction, index) => (
                     <Grid key={index} item xs={12} sm={6} md={4} lg={4}>
                         <Card
@@ -72,14 +85,43 @@ const AuctionsForm: React.FC = () => {
                             }}
                         >
                             <CardMedia
-                                component="img"
-                                alt={`${auction.vehicle.year} ${auction.vehicle.make} ${auction.vehicle.model}`}
-                                height="100%"
-                                image={`http://localhost:8080/api/v1/vehicles/display/${auction.vehicle.id}/${auction.vehicle.images[0]}`}
+                                component="div"  // Use a div instead of img
                                 sx={{
                                     position: 'relative',
+                                    height: '100%',
+                                    overflow: 'hidden',
                                 }}
                             >
+                                <img
+                                    alt={`${auction.vehicle.year} ${auction.vehicle.make} ${auction.vehicle.model}`}
+                                    src={`http://localhost:8080/api/v1/vehicles/display/${auction.vehicle.id}/${auction.vehicle.images[0]}`}
+                                    style={{
+                                        width: '100%',
+                                        height: '100%',
+                                        objectFit: 'cover',
+                                    }}
+                                />
+                                <div
+                                    style={{
+                                        position: 'absolute',
+                                        top: 150,
+                                        left: 10,
+                                        width: '50%',
+                                        height: '10%',
+                                        backgroundColor: 'rgba(0, 0, 0, 0.8)',  // Adjust the opacity as needed
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                        justifyContent: 'center',
+                                        alignItems: 'center',
+                                        color: '#fff',  // Text color
+                                        padding: '10px',  // Adjust padding as needed
+                                        borderRadius: '15px',
+                                    }}
+                                >
+                                    <Typography variant="subtitle2" component="div">
+                                        ⏱ {calculateTimeLeft(Number(auction.endTime))} Bid ${auction.currentMaxBid}
+                                    </Typography>
+                                </div>
                             </CardMedia>
                             <CardContent sx={{ flex: '1 0 auto' }}>
                                 <Typography variant="h6">
@@ -88,17 +130,12 @@ const AuctionsForm: React.FC = () => {
                                 <Typography variant="subtitle1" color="textSecondary">
                                     Owner: {auction.auctionOwner}
                                 </Typography>
-                                <Typography variant="subtitle1" color="textSecondary">
-                                    Time Left: {calculateTimeLeft(Number(auction.endTime))}
-                                </Typography>
-                                <Typography variant="subtitle1" color="textSecondary">
-                                    Highest Bid: ${auction.currentMaxBid}
-                                </Typography>
                             </CardContent>
                         </Card>
                     </Grid>
                 ))}
         </Grid>
+
     );
 };
 

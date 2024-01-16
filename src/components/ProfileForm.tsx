@@ -11,6 +11,8 @@ import { apiInstance } from '../axios-instance';
 import { RouteNames } from '../routes';
 import {User} from "../models/IUser";
 import {Vehicle} from "../models/IVehicle";
+import {message} from "antd";
+import {Button, Dialog, DialogActions, DialogContent, DialogTitle} from "@mui/material";
 
 interface ProfileFormProps {
     user?: User;
@@ -18,7 +20,6 @@ interface ProfileFormProps {
     onDeleteVehicle: (vehicleId: number) => void;
     onItemClick: (vehicleId: number) => void;
 }
-
 const VehicleListing: React.FC<ProfileFormProps> = ({ vehicles, onDeleteVehicle, onItemClick }) => (
     <Grid container spacing={2}>
         {vehicles.filter((vehicle) => !vehicle.deleted).map((vehicle) => (
@@ -29,32 +30,103 @@ const VehicleListing: React.FC<ProfileFormProps> = ({ vehicles, onDeleteVehicle,
     </Grid>
 );
 
+const handleCreateAuction = async (vehicle: Vehicle, duration: string) => {
+    const reservePrice = vehicle.expectedBid;
+
+    const payloadData = {
+        vehicleId: vehicle.id,
+        reservePrice: reservePrice,
+        duration: duration
+    };
+
+    try {
+        const token = localStorage.getItem('token');
+        const headers = {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+        };
+       await apiInstance.post('auctions', payloadData, {headers});
+       message.success("Auction created successfully.");
+    } catch (error) {
+        console.error('Error creating auction:', error);
+        message.error("Error creating auction: ${error}");
+    }
+};
+
+
 interface VehicleCardProps {
     vehicle: Vehicle;
     onDeleteVehicle: (vehicleId: number) => void;
     onItemClick: (vehicleId: number) => void;
 }
 
-const VehicleCard: React.FC<VehicleCardProps> = ({ vehicle, onDeleteVehicle, onItemClick }) => (
-    <Card>
-        <CardMedia
-            component="img"
-            alt={`${vehicle.make} ${vehicle.model}`}
-            width="100%"
-            image={`http://localhost:8080/api/v1/vehicles/display/${vehicle.id}/${vehicle.images[0]}`}
-            onClick={() => onItemClick(vehicle.id)}
-            style={{ objectFit: 'contain' }}
-        />
-        <CardContent>
-            <Typography variant="h6">{vehicle.year}, {vehicle.make} {vehicle.model}</Typography>
-            <Typography variant="body2">Mileage: {vehicle.mileage}</Typography>
-            <Typography variant="body2">Expected Bid: {vehicle.expectedBid}</Typography>
-            <button onClick={() => onDeleteVehicle(vehicle.id)} className="delete-button">
-                Delete
-            </button>
-        </CardContent>
-    </Card>
-);
+const VehicleCard: React.FC<VehicleCardProps> = ({ vehicle, onDeleteVehicle, onItemClick }) => {
+    const [openDialog, setOpenDialog] = useState<boolean>(false);
+    const [duration, setDuration] = useState<string>('week');
+    const history = useHistory();
+
+    const handleOpenDialog = () => {
+        setOpenDialog(true);
+    };
+
+    const handleCloseDialog = () => {
+        setOpenDialog(false);
+    };
+
+    const handleDurationChange = (event: React.ChangeEvent<{ value: unknown }>) => {
+        setDuration(event.target.value as string);
+    };
+
+    const handleClickOnStartAuction = () => {
+        handleCreateAuction(vehicle, duration)
+        handleCloseDialog();
+        history.push(RouteNames.AUCTIONS)
+    };
+
+    return (
+        <Card>
+            <CardMedia
+                component="img"
+                alt={`${vehicle.make} ${vehicle.model}`}
+                width="100%"
+                image={`http://localhost:8080/api/v1/vehicles/display/${vehicle.id}/${vehicle.images[0]}`}
+                onClick={() => onItemClick(vehicle.id)}
+                style={{ objectFit: 'contain' }}
+            />
+            <CardContent>
+                <Typography variant="h6">{vehicle.year}, {vehicle.make} {vehicle.model}</Typography>
+                <Typography variant="body2">Mileage: {vehicle.mileage}</Typography>
+                <button onClick={() => onDeleteVehicle(vehicle.id)} className="delete-button">
+                    Delete
+                </button>
+                {!vehicle.onSale && (
+                    <div>
+                        <button onClick={handleOpenDialog} className="create-auction-button">
+                            Create Auction
+                        </button>
+                        <Dialog
+                            open={openDialog} onClose={handleCloseDialog}>
+                            <DialogTitle>Select Duration</DialogTitle>
+                            <DialogContent>
+                                <select value={duration} onChange={handleDurationChange}>
+                                    <option value="minute">Minute</option>
+                                    <option value="hour">Hour</option>
+                                    <option value="day">Day</option>
+                                    <option value="week">Week</option>
+                                    <option value="month">Month</option>
+                                </select>
+                            </DialogContent>
+                            <DialogActions>
+                            <Button onClick={handleCloseDialog}>Cancel</Button>
+                                <Button onClick={handleClickOnStartAuction}>Start Auction</Button>
+                            </DialogActions>
+                        </Dialog>
+                    </div>
+                )}
+            </CardContent>
+        </Card>
+    );
+};
 
 interface UserDetailsProps {
     user: User | null;
