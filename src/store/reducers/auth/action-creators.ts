@@ -103,18 +103,5 @@ export const AuthActionCreators = {
         } finally {
             dispatch(AuthActionCreators.setIsLoading(false));
         }
-    },
-
-    profile: () => async (dispatch: AppDispatch) => {
-        const response = await
-            apiInstance.get <
-            {
-                id: string,
-                username: string,
-                email: string,
-                vehicles: string
-
-            }>('users/current')
-        console.log(response.data.id)
     }
 }
