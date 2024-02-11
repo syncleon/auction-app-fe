@@ -80,7 +80,7 @@ const VehicleCard: React.FC<VehicleCardProps> = ({ vehicle, onDeleteVehicle, onI
     const handleClickOnStartAuction = () => {
         handleCreateAuction(vehicle, duration)
         handleCloseDialog();
-        history.push(RouteNames.AUCTIONS)
+        history.push(RouteNames.HOME)
     };
 
     return (

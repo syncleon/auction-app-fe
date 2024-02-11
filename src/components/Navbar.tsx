@@ -6,19 +6,23 @@ import { useHistory } from 'react-router-dom';
 import { RouteNames } from '../routes';
 import { useTypedSelector } from '../hooks/useTypedSelector';
 import { useActions } from '../hooks/useActions';
-import Logo from '../resources/logo.svg';
+import BidLogo from '../resources/logo.svg'; // Import your SVG logo
 
 const Navbar: FC = () => {
     const history = useHistory();
-    const {logout} = useActions();
-    const {isAuth, user} = useTypedSelector(state => state.auth);
+    const { logout } = useActions();
+    const { isAuth, user } = useTypedSelector(state => state.auth);
 
     const handleAddClick = () => {
         history.push(RouteNames.ADD);
     };
 
-    const handleAuctionClick = () => {
-        history.push(RouteNames.AUCTIONS)
+    const handlePastAuctionsClick = () => {
+        history.push(RouteNames.PAST_AUCTIONS);
+    };
+
+    const handleAddedVehiclesClick = () => {
+        history.push(RouteNames.ADDED_VEHICLES);
     };
 
     const handleLoginClick = () => {
@@ -49,94 +53,65 @@ const Navbar: FC = () => {
             <Toolbar
                 sx={{
                     display: 'flex',
-                    justifyContent: 'space-between'
+                    justifyContent: 'space-between',
+                    alignItems: 'center' // Center align items vertically
                 }}>
-                <a
-                    href={RouteNames.HOME}
-                    style={{
-                        textDecoration: 'none'
-                    }}>
+                <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    padding: '5px', // Adjust padding as needed
+                }}>
                     <img
-                        src={Logo}
-                        alt="Logo"
-                        style={{width: '100px', height: 'auto', cursor: 'pointer'}}
+                        src={BidLogo} // Use your SVG logo here
+                        alt="Bid Logo"
+                        style={{
+                            width: '130px', // Adjust width as needed
+                            height: 'auto', // Maintain aspect ratio
+                            cursor: 'pointer',
+                            transition: 'transform 0.2s ease', // Example of CSS transition
+                        }}
                         onClick={handleAppLogoClick}
-                        className="logo"
                     />
-                </a>
+                </div>
+
                 {isAuth ? (
-                        <div>
-                            <Button
-                                color="inherit"
-                                onClick={handleAuctionClick}
-                                sx={{
-                                    color: 'black',
-                                    textTransform: 'none',
-                                    border: '1px solid blue'
-                                }}>
-                                Active Auctions
-                            </Button>
-                            <Button
-                                color="inherit"
-                                onClick={handleAddClick}
-                                sx={{
-                                    color: 'black',
-                                    textTransform: 'none',
-                                    border: '1px solid blue'
-                                }}>
-                                Sell a car
-                            </Button>
-                            <Button
-                                color="inherit"
-                                onClick={handleUsernameClick}
-                                sx={{
-                                    color: 'black',
-                                    textTransform: 'none'
-                                }}>
-                                {user.username}
-                            </Button>
-                            <Button
-                                color="inherit"
-                                onClick={handleLogoutClick}
-                                sx={{
-                                    color: 'black',
-                                    textTransform: 'none'
-                                }}>
-                                Logout
-                            </Button>
-                        </div>
+                    <div>
+                        <Button
+                            variant="contained"
+                            onClick={handlePastAuctionsClick}
+                            sx={{marginRight: '8px', color: 'black', backgroundColor: '#FFD700'}}>Past Auctions</Button>
+                        <Button
+                            variant="contained"
+                            onClick={handleAddClick}
+                            sx={{marginRight: '8px', color: 'white', backgroundColor: '#4CAF50'}}>Sell a Car</Button>
+                        <Button
+                            variant="contained"
+                            onClick={handleUsernameClick}
+                            sx={{
+                                marginRight: '8px',
+                                color: 'black',
+                                backgroundColor: '#2196F3'
+                            }}>{user.username}</Button>
+                        <Button
+                            variant="contained"
+                            onClick={handleLogoutClick}
+                            sx={{color: 'black', backgroundColor: '#FF5722'}}>Logout</Button>
+                    </div>
                 ) : (
-                        <div>
-                            <Button
-                                color="inherit"
-                                onClick={handleAuctionClick}
-                                sx={{
-                                    color: 'black',
-                                    textTransform: 'none',
-                                    border: '1px solid blue'
-                                }}>
-                                Active Auctions
-                            </Button>
-                            <Button
-                                color="inherit"
-                                onClick={handleLoginClick}
-                                sx={{
-                                    color: 'black',
-                                    textTransform: 'none',
-                                    border: '1px solid blue'
-                                }}>
-                                Sell a car
-                            </Button>
-                            <Button
-                                color="inherit"
-                                onClick={handleLoginClick}
-                                sx={{
-                                    color: 'black',
-                                    textTransform: 'none'
-                                }}>
-                                Login
-                            </Button>
-                        </div>
+                    <div>
+                        <Button
+                            variant="contained"
+                            onClick={handlePastAuctionsClick}
+                            sx={{marginRight: '8px', color: 'black', backgroundColor: '#FFD700'}}>Past Auctions</Button>
+                        <Button
+                            variant="contained"
+                            onClick={handleLoginClick}
+                            sx={{marginRight: '8px', color: 'white', backgroundColor: '#4CAF50'}}>Sell a Car</Button>
+                        <Button
+                            variant="contained"
+                            onClick={handleLoginClick}
+                            sx={{color: 'black', backgroundColor: '#2196F3'}}>Login</Button>
+                    </div>
                 )}
             </Toolbar>
         </AppBar>

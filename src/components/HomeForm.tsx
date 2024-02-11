@@ -1,17 +1,102 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
+import { Auction } from '../models/IAuction';
 import { useHistory } from 'react-router-dom';
 import { RouteNames } from '../routes';
-import { Vehicle } from '../models/IVehicle';
 import { apiInstance } from '../axios-instance';
-import { Grid, Card, CardContent, CardMedia, Typography } from '@mui/material';
+import {
+    Grid,
+} from '@mui/material';
+import {Vehicle} from "../models/IVehicle";
+import AuctionsGrid from "./AuctionsGrid";
+import VehiclesGrid from "./VehiclesGrid";
 
 const HomeForm: React.FC = () => {
+    const [auctions, setAuctions] = useState<Auction[]>([]);
     const [vehicles, setVehicles] = useState<Vehicle[]>([]);
     const history = useHistory();
 
-    const handleClickOnImage = (vehicleId: number) => {
-        history.push(RouteNames.VEHICLE_DETAILS.replace(':id', String(vehicleId)));
+    const handleClickOnImage = (auctionId: number) => {
+        history.push(RouteNames.VEHICLE_DETAILS.replace(':id', String(auctionId)));
     };
+
+    const calculateTimeLeft = (endTime: number): string => {
+        const currentTime = new Date().getTime();
+        const remainingTime = endTime - currentTime;
+
+        if (remainingTime <= 0) {
+            return 'Final';
+        }
+
+        const seconds = Math.floor((remainingTime / 1000) % 60);
+        const minutes = Math.floor((remainingTime / 1000 / 60) % 60);
+        const hours = Math.floor((remainingTime / (1000 * 60 * 60)) % 24);
+        const days = Math.floor(remainingTime / (1000 * 60 * 60 * 24));
+
+        const displayMinutes = minutes < 10 ? `0${minutes}` : `${minutes}`;
+        const displaySeconds = seconds < 10 ? `0${seconds}` : `${seconds}`;
+
+        if (days > 1) {
+            return `${days} days`;
+        } else if (days === 1) {
+            return `${days} day`;
+        } else if (hours > 0) {
+            return `${hours}:${displayMinutes}:${displaySeconds}`;
+        } else {
+            return `${displayMinutes}:${displaySeconds}`;
+        }
+    };
+
+    const fetchAuctions = () => {
+        apiInstance
+            .get('auctions')
+            .then((response) => {
+                const auctionsData: Auction[] = response.data.filter(
+                    (auction: Auction) => !isAuctionEnded(Number(auction.endTime))
+                );
+                setAuctions(auctionsData);
+            })
+            .catch((error) => {
+                console.error('Error fetching auctions:', error);
+            });
+    };
+
+    const isAuctionEnded = (endTime: number): boolean => {
+        const currentTime = new Date().getTime();
+        return endTime < currentTime;
+    };
+
+
+    useEffect(() => {
+        const intervalId = setInterval(() => {
+            fetchAuctions();
+            auctions.forEach((auction) => {
+                if (calculateTimeLeft(Number(auction.endTime)) === 'Auction ended') {
+                    const auctionId = auction.id;
+                    const token = localStorage.getItem('token');
+                    const headers = {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${token}`,
+                    };
+
+                    apiInstance.post(`auctions/${auctionId}/close`, null, { headers })
+                        .then(response => {
+                            console.log('Auction closed successfully:', response.data);
+                        })
+                        .catch(error => {
+                            console.error('Error closing auction:', error);
+                        });
+                }
+            });
+        }, 1000);
+
+        return () => clearInterval(intervalId);
+    }, []);
+
+    useEffect(() => {
+        const intervalId = setInterval(fetchAuctions, 1000);
+
+        return () => clearInterval(intervalId);
+    }, []);
 
     useEffect(() => {
         apiInstance
@@ -25,64 +110,26 @@ const HomeForm: React.FC = () => {
             });
     }, []);
 
+
+
     return (
-        <Grid container spacing={2}>
-            {vehicles
-                .filter((vehicle) => !vehicle.deleted)
-                .map((vehicle, index) => (
-                    <Grid key={index} item xs={12} sm={6} md={4} lg={4}>
-                        <Card
-                            onClick={() => handleClickOnImage(vehicle.id)}
-                            sx={{
-                                maxWidth: 500,
-                                height: '100%',
-                                display: 'flex',
-                                flexDirection: 'column'
-                            }}
-                        >
-                            <CardMedia
-                                component="img"
-                                alt={`${vehicle.year} ${vehicle.make} ${vehicle.model}`}
-                                height="100%"
-                                image={`http://localhost:8080/api/v1/vehicles/display/${vehicle.id}/${vehicle.images[0]}`}
-                            />
-                            <CardContent sx={{ flex: '1 0 auto' }}>
-                                <Typography variant="h6">
-                                    {`${vehicle.year} ${vehicle.make} ${vehicle.model}`}
-                                </Typography>
-                                <Typography variant="subtitle1" color="textSecondary">
-                                    Owner: {vehicle.sellerUsername}
-                                </Typography>
-                                {/* Green dot for onSale === true */}
-                                {vehicle.onSale ? (
-                                    <div
-                                        style={{
-                                            width: 10,
-                                            height: 10,
-                                            borderRadius: '50%',
-                                            backgroundColor: 'green',
-                                            marginRight: 8,
-                                            display: 'inline-block',
-                                        }}
-                                    ></div>
-                                ) : (
-                                    // Red dot for onSale === false
-                                    <div
-                                        style={{
-                                            width: 10,
-                                            height: 10,
-                                            borderRadius: '50%',
-                                            backgroundColor: 'red',
-                                            marginRight: 8,
-                                            display: 'inline-block',
-                                        }}
-                                    ></div>
-                                )}
-                            </CardContent>
-                        </Card>
-                    </Grid>
-                ))}
-        </Grid>
+        <React.Fragment>
+            <div><h1>Auctions</h1></div>
+            <Grid container spacing={2}>
+                <AuctionsGrid
+                    auctions={auctions}
+                    calculateTimeLeft={calculateTimeLeft}
+                    handleClickOnImage={handleClickOnImage}
+                />
+            </Grid>
+            <div><h1>New Listed</h1></div>
+            <Grid container spacing={2}>
+                <VehiclesGrid
+                    vehicles={vehicles}
+                    handleClickOnImage={handleClickOnImage}
+                />
+            </Grid>
+        </React.Fragment>
     );
 };
 
