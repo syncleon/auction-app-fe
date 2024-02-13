@@ -71,14 +71,7 @@ const HomeForm: React.FC = () => {
             fetchAuctions();
             auctions.forEach((auction) => {
                 if (calculateTimeLeft(Number(auction.endTime)) === 'Auction ended') {
-                    const auctionId = auction.id;
-                    const token = localStorage.getItem('token');
-                    const headers = {
-                        'Content-Type': 'application/json',
-                        Authorization: `Bearer ${token}`,
-                    };
-
-                    apiInstance.post(`auctions/${auctionId}/close`, null, { headers })
+                    apiInstance.post(`auctions/closeExpired`, null,)
                         .then(response => {
                             console.log('Auction closed successfully:', response.data);
                         })
