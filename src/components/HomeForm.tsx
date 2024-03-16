@@ -15,6 +15,24 @@ const HomeForm: React.FC = () => {
     const [vehicles, setVehicles] = useState<Vehicle[]>([]);
     const history = useHistory();
 
+    useEffect(() => {
+        const intervalId = setInterval(fetchAuctions, 1000);
+
+        return () => clearInterval(intervalId);
+    }, []);
+
+    useEffect(() => {
+        apiInstance
+            .get('vehicles')
+            .then((response) => {
+                const vehiclesData: Vehicle[] = response.data;
+                setVehicles(vehiclesData);
+            })
+            .catch((error) => {
+                console.error('Error fetching vehicles:', error);
+            });
+    }, []);
+
     const handleClickOnImage = (auctionId: number) => {
         history.push(RouteNames.VEHICLE_DETAILS.replace(':id', String(auctionId)));
     };
@@ -22,10 +40,6 @@ const HomeForm: React.FC = () => {
     const calculateTimeLeft = (endTime: number): string => {
         const currentTime = new Date().getTime();
         const remainingTime = endTime - currentTime;
-
-        if (remainingTime <= 0) {
-            return 'Final';
-        }
 
         const seconds = Math.floor((remainingTime / 1000) % 60);
         const minutes = Math.floor((remainingTime / 1000 / 60) % 60);
@@ -65,46 +79,6 @@ const HomeForm: React.FC = () => {
         return endTime < currentTime;
     };
 
-
-    useEffect(() => {
-        const intervalId = setInterval(() => {
-            fetchAuctions();
-            auctions.forEach((auction) => {
-                if (calculateTimeLeft(Number(auction.endTime)) === 'Auction ended') {
-                    apiInstance.post(`auctions/closeExpired`, null,)
-                        .then(response => {
-                            console.log('Auction closed successfully:', response.data);
-                        })
-                        .catch(error => {
-                            console.error('Error closing auction:', error);
-                        });
-                }
-            });
-        }, 1000);
-
-        return () => clearInterval(intervalId);
-    }, []);
-
-    useEffect(() => {
-        const intervalId = setInterval(fetchAuctions, 1000);
-
-        return () => clearInterval(intervalId);
-    }, []);
-
-    useEffect(() => {
-        apiInstance
-            .get('vehicles')
-            .then((response) => {
-                const vehiclesData: Vehicle[] = response.data;
-                setVehicles(vehiclesData);
-            })
-            .catch((error) => {
-                console.error('Error fetching vehicles:', error);
-            });
-    }, []);
-
-
-
     return (
         <React.Fragment>
             <div><h1>Auctions</h1></div>
@@ -115,7 +89,7 @@ const HomeForm: React.FC = () => {
                     handleClickOnImage={handleClickOnImage}
                 />
             </Grid>
-            <div><h1>New Listed</h1></div>
+            <div><h1>New Added</h1></div>
             <Grid container spacing={2}>
                 <VehiclesGrid
                     vehicles={vehicles}

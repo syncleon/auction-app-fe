@@ -25,6 +25,7 @@ const PastAuctionsForm: React.FC = () => {
             });
     };
 
+
     const isAuctionEnded = (endTime: number): boolean => {
         const currentTime = new Date().getTime();
         return endTime < currentTime;

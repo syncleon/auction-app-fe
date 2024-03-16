@@ -45,11 +45,11 @@ const handleCreateAuction = async (vehicle: Vehicle, duration: string) => {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${token}`,
         };
-       await apiInstance.post('auctions', payloadData, {headers});
-       message.success("Auction created successfully.");
+        await apiInstance.post('auctions', payloadData, {headers});
+        message.success("Auction created successfully.");
     } catch (error) {
-        console.error('Error creating auction:', error);
-        message.error("Error creating auction: ${error}");
+        console.error('Error creating auction:', (error as any).response.data);
+        message.error(`Error creating auction: ${(error as any).response.data}`);
     }
 };
 
@@ -63,6 +63,7 @@ interface VehicleCardProps {
 const VehicleCard: React.FC<VehicleCardProps> = ({ vehicle, onDeleteVehicle, onItemClick }) => {
     const [openDialog, setOpenDialog] = useState<boolean>(false);
     const [duration, setDuration] = useState<string>('week');
+
     const history = useHistory();
 
     const handleOpenDialog = () => {
@@ -99,7 +100,7 @@ const VehicleCard: React.FC<VehicleCardProps> = ({ vehicle, onDeleteVehicle, onI
                 <button onClick={() => onDeleteVehicle(vehicle.id)} className="delete-button">
                     Delete
                 </button>
-                {!vehicle.onSale && (
+                {!vehicle.onSale && !vehicle.auctionAdded && ( // Check if auctionAdded is false
                     <div>
                         <button onClick={handleOpenDialog} className="create-auction-button">
                             Create Auction
@@ -117,7 +118,7 @@ const VehicleCard: React.FC<VehicleCardProps> = ({ vehicle, onDeleteVehicle, onI
                                 </select>
                             </DialogContent>
                             <DialogActions>
-                            <Button onClick={handleCloseDialog}>Cancel</Button>
+                                <Button onClick={handleCloseDialog}>Cancel</Button>
                                 <Button onClick={handleClickOnStartAuction}>Start Auction</Button>
                             </DialogActions>
                         </Dialog>

@@ -9,7 +9,7 @@ interface VehicleGridProps {
 
 const VehiclesGrid: React.FC<VehicleGridProps> = ({ vehicles, handleClickOnImage }) => {
     // Filter vehicles that are on sale
-    const vehiclesOnSale = vehicles.filter(vehicle => !vehicle.onSale);
+    const vehiclesOnSale = vehicles.filter(vehicle => !vehicle.onSale && !vehicle.auctionAdded);
 
     return (
         <React.Fragment>
