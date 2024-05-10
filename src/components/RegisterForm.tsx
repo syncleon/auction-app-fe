@@ -1,10 +1,9 @@
 import React, { FC, useState } from 'react';
-import { Button, Container, Typography, Link, Grid, TextField, CircularProgress } from '@mui/material';
+import { Button, Typography, Link, TextField, CircularProgress } from '@mui/material';
 import { useTypedSelector } from '../hooks/useTypedSelector';
 import { useActions } from '../hooks/useActions';
 import { useHistory } from 'react-router-dom';
 import { RouteNames } from '../routes';
-import { rules } from '../utils/rules';
 
 const RegisterForm: FC = () => {
     const {error, isLoading} = useTypedSelector(state => state.auth);
@@ -77,8 +76,7 @@ const RegisterForm: FC = () => {
                 {isLoading ? <CircularProgress size={24} color="inherit"/> : 'Register'}
             </Button>
             <Typography
-                style={{ fontSize: '15px' }}>
-                Already have an account?{' '}
+                style={{ fontSize: '15px' }}>Already have an account?{' '}
                 <Link component="button"
                       variant="body2"
                       onClick={handleLoginClick}

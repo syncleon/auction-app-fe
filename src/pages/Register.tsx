@@ -1,8 +1,6 @@
 import React, {FC} from 'react';
-import {Layout, Row} from "antd";
 import RegisterForm from "../components/RegisterForm";
 import {Container, Grid} from "@mui/material";
-import LoginForm from "../components/LoginForm";
 
 const Register:FC = () => {
     return (
