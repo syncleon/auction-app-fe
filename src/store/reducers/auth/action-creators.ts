@@ -10,6 +10,7 @@ import {IUser} from "../../../models/IUsers";
 import {AppDispatch} from "../../index";
 import axios from "axios";
 import {apiInstance} from "../../../axios-instance";
+import {message} from "antd";
 
 
 export const AuthActionCreators = {
@@ -53,10 +54,11 @@ export const AuthActionCreators = {
             localStorage.setItem('auth', 'true');
             localStorage.setItem('username', username);
             localStorage.setItem('token', token)
-            dispatch(AuthActionCreators.setSuccess("Login success!"))
+            dispatch(AuthActionCreators.setSuccess(`Welcome back, ${username}!`))
             dispatch(AuthActionCreators.setIsAuth(true));
             dispatch(AuthActionCreators.setUser(user));
             dispatch(AuthActionCreators.setIsLoading(false));
+            dispatch(AuthActionCreators.setError('')); // Reset error state on successful login
         } catch (error) {
             if (axios.isAxiosError(error) && error.response) {
                 const statusText = error.response.data;
@@ -74,6 +76,7 @@ export const AuthActionCreators = {
         localStorage.removeItem('email')
         dispatch(AuthActionCreators.setUser({} as IUser));
         dispatch(AuthActionCreators.setIsAuth(false))
+        message.info(`We hope you're will back :)`)
     },
 
     register: (username: string, email: string, password: string) => async (dispatch: AppDispatch) => {
