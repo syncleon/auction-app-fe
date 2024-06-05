@@ -1,7 +1,7 @@
 import React from "react";
 import Profile from "../pages/Profile";
 import Home from "../pages/Home";
-import Add from "../pages/Add";
+import AddItem from "../pages/AddItem";
 
 export interface IRoute {
     path: string;
@@ -22,5 +22,5 @@ export const publicRoutes: IRoute[] = [
 export const privateRoutes: IRoute[] = [
     {path: RouteNames.PROFILE, exact: true, component: Profile},
     {path: RouteNames.HOME, exact: true, component: Home},
-    {path: RouteNames.ADD, exact: true, component: Add},
+    {path: RouteNames.ADD, exact: true, component: AddItem},
 ]

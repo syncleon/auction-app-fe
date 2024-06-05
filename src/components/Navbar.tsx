@@ -11,12 +11,12 @@ import { useActions } from '../hooks/useActions';
 import BidLogo from '../resources/logo.svg';
 import LoginDialog from './LoginDialog';
 import RegDialog from "./RegDialog";
-import {message} from "antd";
+import { message } from "antd";
 
 const Navbar: FC = () => {
     const history = useHistory();
     const { logout } = useActions();
-    const { isAuth, user} = useTypedSelector(state => state.auth);
+    const { isAuth, user } = useTypedSelector(state => state.auth);
     const [openLoginDialog, setOpenLoginDialog] = useState(false);
     const [openRegDialog, setOpenRegDialog] = useState(false);
 
@@ -75,14 +75,14 @@ const Navbar: FC = () => {
 
                     {isAuth ? (
                         <div>
-                            <Button onClick={handleAddClick} sx={{ color: 'black' }}>Add Car</Button>
-                            <Button onClick={handleUsernameClick} sx={{ color: 'black' }}>{user.username}</Button>
-                            <Button onClick={handleLogoutClick} sx={{ color: 'black' }}>Logout</Button>
+                            <Button onClick={handleAddClick} sx={{ color: 'black', textTransform: 'none', fontSize: '16px' }}>Sell a Car</Button>
+                            <Button onClick={handleUsernameClick} sx={{ color: 'black', textTransform: 'none', fontSize: '16px' }}>{user.username}</Button>
+                            <Button onClick={handleLogoutClick} sx={{ color: 'black', textTransform: 'none', fontSize: '16px' }}>logout</Button>
                         </div>
                     ) : (
                         <div>
-                            <Button onClick={handleAddClick} sx={{ color: 'black' }}>Add Car</Button>
-                            <Button onClick={handleSignUpClick} sx={{ color: 'black' }}>Sign Up</Button>
+                            <Button onClick={handleAddClick} sx={{ color: 'black', textTransform: 'none', fontSize: '16px' }}>Add Car</Button>
+                            <Button onClick={handleSignUpClick} sx={{ color: 'black', textTransform: 'none', fontSize: '16px' }}>Sign Up</Button>
                         </div>
                     )}
                 </Toolbar>

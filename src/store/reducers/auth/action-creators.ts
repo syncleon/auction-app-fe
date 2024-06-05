@@ -76,7 +76,7 @@ export const AuthActionCreators = {
         localStorage.removeItem('email')
         dispatch(AuthActionCreators.setUser({} as IUser));
         dispatch(AuthActionCreators.setIsAuth(false))
-        message.info(`We hope you're will back :)`)
+        message.info(`Hope you're will return :)`)
     },
 
     register: (username: string, email: string, password: string) => async (dispatch: AppDispatch) => {

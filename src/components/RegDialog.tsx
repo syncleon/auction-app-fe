@@ -53,7 +53,6 @@ const RegDialog: React.FC<RegDialogProps> = ({ open, onClose, onLoginClick }) =>
     };
 
     const validatePassword = (password: string) => {
-        // Include your password complexity criteria here
         const hasUpperCase = /[A-Z]/.test(password);
         const hasLowerCase = /[a-z]/.test(password);
         const hasDigit = /\d/.test(password);
@@ -150,7 +149,7 @@ const RegDialog: React.FC<RegDialogProps> = ({ open, onClose, onLoginClick }) =>
                                     required
                                     error={passwordError !== null} // Apply error if password doesn't meet complexity criteria
                                     helperText={passwordError}
-                                    InputProps={{ // Add input props for password visibility toggle
+                                    InputProps={{ // AddItem input props for password visibility toggle
                                         endAdornment: (
                                             <IconButton
                                                 aria-label="toggle password visibility"
