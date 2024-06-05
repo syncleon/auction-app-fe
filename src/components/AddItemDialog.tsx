@@ -8,7 +8,7 @@ const AddItemDialog = () => {
         make: "",
         model: "",
         mileage: 0,
-        year: "",
+        year: 0,
         onAuction: false,
         isSold: false
     });
