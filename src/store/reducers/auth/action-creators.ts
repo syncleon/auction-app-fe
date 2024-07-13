@@ -54,10 +54,10 @@ export const AuthActionCreators = {
             localStorage.setItem('auth', 'true');
             localStorage.setItem('username', username);
             localStorage.setItem('token', token)
-            dispatch(AuthActionCreators.setSuccess(`Welcome back, ${username}!`))
             dispatch(AuthActionCreators.setIsAuth(true));
             dispatch(AuthActionCreators.setUser(user));
             dispatch(AuthActionCreators.setIsLoading(false));
+            dispatch(AuthActionCreators.setSuccess(`Welcome back, ${username}!`))
             dispatch(AuthActionCreators.setError('')); // Reset error state on successful login
         } catch (error) {
             if (axios.isAxiosError(error) && error.response) {

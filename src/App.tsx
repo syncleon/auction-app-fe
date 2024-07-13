@@ -4,7 +4,6 @@ import Navbar from './components/Navbar';
 import { Container } from '@mui/material';
 import {useActions} from "./hooks/useActions";
 import {IUser} from "./models/IUsers";
-import {ToastContainer} from "react-toastify";
 
 const App: FC = () => {
     const {setUser, setIsAuth} = useActions();
