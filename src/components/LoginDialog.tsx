@@ -19,7 +19,7 @@ interface LoginDialogProps {
 }
 
 const LoginDialog: React.FC<LoginDialogProps> = ({ open, onClose, onSignUpClick }) => {
-    const { error, isLoading, isAuth, success } = useTypedSelector(state => state.auth);
+    const { authError, authIsLoading, isAuth, authSuccess } = useTypedSelector(state => state.auth);
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
@@ -33,13 +33,12 @@ const LoginDialog: React.FC<LoginDialogProps> = ({ open, onClose, onSignUpClick 
         }
     }, [open]);
 
-    // Close dialog on successful login
     useEffect(() => {
         if (isAuth && open) {
             onClose();
-            message.success(success);
+            message.success(authSuccess);
         }
-    }, [isAuth, onClose, open, success]);
+    }, [isAuth, onClose, open, authSuccess]);
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -106,10 +105,10 @@ const LoginDialog: React.FC<LoginDialogProps> = ({ open, onClose, onSignUpClick 
                                 }}
                             />
                         </Grid>
-                        {error && (
+                        {authError && (
                             <Grid item>
                                 <Typography variant="body2" color="error">
-                                    {error}
+                                    {authError.toString()}
                                 </Typography>
                             </Grid>
                         )}
@@ -119,9 +118,9 @@ const LoginDialog: React.FC<LoginDialogProps> = ({ open, onClose, onSignUpClick 
                                 variant="contained"
                                 color="primary"
                                 fullWidth
-                                disabled={isLoading}
+                                disabled={authIsLoading}
                             >
-                                {isLoading ? <CircularProgress size={24} color="inherit" /> : 'Login'}
+                                {authIsLoading ? <CircularProgress size={24} color="inherit" /> : 'Login'}
                             </Button>
                         </Grid>
                     </Grid>

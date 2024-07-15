@@ -1,9 +1,9 @@
 import {
     AuthActionEnum,
     SetAuthAction,
-    SetErrorAction,
-    SetIsLoadingAction,
-    SetSuccessAction,
+    SetAuthErrorAction,
+    SetAuthIsLoadingAction,
+    SetAuthSuccessAction,
     SetUserAction
 } from "./types";
 import {IUser} from "../../../models/IUsers";
@@ -22,24 +22,24 @@ export const AuthActionCreators = {
         type: AuthActionEnum.SET_AUTH,
         payload: auth
     }),
-    setIsLoading: (isLoading: boolean): SetIsLoadingAction => ({
-        type: AuthActionEnum.SET_IS_LOADING,
-        payload: isLoading
+    setAuthIsLoading: (authIsLoading: boolean): SetAuthIsLoadingAction => ({
+        type: AuthActionEnum.SET_AUTH_LOADING,
+        payload: authIsLoading
     }),
 
-    setSuccess: (message: string): SetSuccessAction => ({
-        type: AuthActionEnum.SET_SUCCESS,
-        payload: message
+    setAuthIsSuccess: (authMessage: string): SetAuthSuccessAction => ({
+        type: AuthActionEnum.SET_AUTH_IS_SUCCESS,
+        payload: authMessage
     }),
 
-    setError: (error: string): SetErrorAction => ({
-        type: AuthActionEnum.SET_ERROR,
-        payload: error
+    setAuthIsError: (authError: string): SetAuthErrorAction => ({
+        type: AuthActionEnum.SET_AUTH_ERROR,
+        payload: authError
     }),
 
     login: (username: string, password: string) => async (dispatch: AppDispatch) => {
         try {
-            dispatch(AuthActionCreators.setIsLoading(true));
+            dispatch(AuthActionCreators.setAuthIsLoading(true));
             const response = await apiInstance.post<{ token: string }>('signin', {
                 username: username,
                 password: password,
@@ -56,16 +56,16 @@ export const AuthActionCreators = {
             localStorage.setItem('token', token)
             dispatch(AuthActionCreators.setIsAuth(true));
             dispatch(AuthActionCreators.setUser(user));
-            dispatch(AuthActionCreators.setIsLoading(false));
-            dispatch(AuthActionCreators.setSuccess(`Welcome back, ${username}!`))
-            dispatch(AuthActionCreators.setError('')); // Reset error state on successful login
+            dispatch(AuthActionCreators.setAuthIsLoading(false));
+            dispatch(AuthActionCreators.setAuthIsSuccess(`Welcome back, ${username}!`))
+            dispatch(AuthActionCreators.setAuthIsError('')); // Reset error state on successful login
         } catch (error) {
             if (axios.isAxiosError(error) && error.response) {
                 const statusText = error.response.data;
-                dispatch(AuthActionCreators.setError(statusText));
+                dispatch(AuthActionCreators.setAuthIsError(statusText));
             }
         } finally {
-            dispatch(AuthActionCreators.setIsLoading(false));
+            dispatch(AuthActionCreators.setAuthIsLoading(false));
         }
     },
 
@@ -81,7 +81,7 @@ export const AuthActionCreators = {
 
     register: (username: string, email: string, password: string) => async (dispatch: AppDispatch) => {
         try {
-            dispatch(AuthActionCreators.setIsLoading(true));
+            dispatch(AuthActionCreators.setAuthIsLoading(true));
             const response = await apiInstance.post<{ token: string }>('signup', {
                 username: username,
                 email: email,
@@ -97,14 +97,14 @@ export const AuthActionCreators = {
             localStorage.setItem('token', token)
             dispatch(AuthActionCreators.setIsAuth(true));
             dispatch(AuthActionCreators.setUser(user));
-            dispatch(AuthActionCreators.setIsLoading(false));
+            dispatch(AuthActionCreators.setAuthIsLoading(false));
         } catch (error) {
             if (axios.isAxiosError(error) && error.response) {
                 const statusText = error.response.data;
-                dispatch(AuthActionCreators.setError(statusText));
+                dispatch(AuthActionCreators.setAuthIsError(statusText));
             }
         } finally {
-            dispatch(AuthActionCreators.setIsLoading(false));
+            dispatch(AuthActionCreators.setAuthIsLoading(false));
         }
     }
 }

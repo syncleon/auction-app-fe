@@ -18,15 +18,15 @@ interface RegDialogProps {
 }
 
 const RegDialog: React.FC<RegDialogProps> = ({ open, onClose, onLoginClick }) => {
-    const { error, isLoading, isAuth } = useTypedSelector(state => state.auth);
+    const { authError, authIsLoading, isAuth } = useTypedSelector(state => state.auth);
     const [email, setEmail] = useState('');
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
-    const [showPassword, setShowPassword] = useState(false); // State to toggle password visibility
+    const [showPassword, setShowPassword] = useState(false);
     const [emailError, setEmailError] = useState<string | null>(null);
-    const [passwordError, setPasswordError] = useState<string | null>(null); // State for password complexity error
+    const [passwordError, setPasswordError] = useState<string | null>(null);
     const [step, setStep] = useState(1);
-    const { register, setError } = useActions();
+    const { register, setItemIsError } = useActions();
 
     useEffect(() => {
         if (!open) {
@@ -36,7 +36,7 @@ const RegDialog: React.FC<RegDialogProps> = ({ open, onClose, onLoginClick }) =>
             setStep(1);
             setEmailError(null);
             setPasswordError(null); // Reset password error state
-            setError('');
+            setItemIsError('');
         }
     }, [open]);
 
@@ -162,10 +162,10 @@ const RegDialog: React.FC<RegDialogProps> = ({ open, onClose, onLoginClick }) =>
                                     }}
                                 />
                             </Grid>
-                            {error && (
+                            {authError && (
                                 <Grid item xs={12}>
                                     <Typography variant="body2" color="error">
-                                        {error}
+                                        {authError}
                                     </Typography>
                                 </Grid>
                             )}
@@ -177,9 +177,9 @@ const RegDialog: React.FC<RegDialogProps> = ({ open, onClose, onLoginClick }) =>
                             onClick={step === 1 ? handleNextStep : handleSubmit}
                             variant="contained"
                             color="primary"
-                            disabled={isLoading || (step === 1 && email.trim() === '')}
+                            disabled={authIsLoading || (step === 1 && email.trim() === '')}
                         >
-                            {step === 1 ? 'Next' : (isLoading ? <CircularProgress size={24} color="inherit" /> : 'Create Account')}
+                            {step === 1 ? 'Next' : (authIsLoading ? <CircularProgress size={24} color="inherit" /> : 'Create Account')}
                         </Button>
                     </Grid>
                 </Grid>

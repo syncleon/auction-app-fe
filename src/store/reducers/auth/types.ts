@@ -4,17 +4,17 @@ import {IUser} from "../../../models/IUsers";
 export interface AuthState {
     isAuth: boolean;
     user: IUser;
-    isLoading: boolean;
-    error: string,
-    success: string
+    authIsLoading: boolean;
+    authError: string;
+    authSuccess: string
 }
 
 export enum AuthActionEnum {
     SET_AUTH = "SET_AUTH",
-    SET_SUCCESS = "SET_SUCCESS",
-    SET_ERROR = "SET_ERROR",
+    SET_AUTH_IS_SUCCESS = "SET_AUTH_IS_SUCCESS",
+    SET_AUTH_ERROR = "SET_AUTH_ERROR",
     SET_USER = "SET_USER",
-    SET_IS_LOADING = "SET_IS_LOADING"
+    SET_AUTH_LOADING = "SET_AUTH_LOADING"
 }
 
 export interface SetAuthAction {
@@ -22,13 +22,13 @@ export interface SetAuthAction {
     payload: boolean
 }
 
-export interface SetSuccessAction {
-    type: AuthActionEnum.SET_SUCCESS
+export interface SetAuthSuccessAction {
+    type: AuthActionEnum.SET_AUTH_IS_SUCCESS
     payload: string
 }
 
-export interface SetErrorAction {
-    type: AuthActionEnum.SET_ERROR
+export interface SetAuthErrorAction {
+    type: AuthActionEnum.SET_AUTH_ERROR
     payload: string
 }
 
@@ -37,15 +37,15 @@ export interface SetUserAction {
     payload: IUser
 }
 
-export interface SetIsLoadingAction {
-    type: AuthActionEnum.SET_IS_LOADING
+export interface SetAuthIsLoadingAction {
+    type: AuthActionEnum.SET_AUTH_LOADING
     payload: boolean
 }
 
 export type AuthAction =
     SetAuthAction |
-    SetSuccessAction |
-    SetErrorAction |
+    SetAuthSuccessAction |
+    SetAuthErrorAction |
     SetUserAction |
-    SetIsLoadingAction
+    SetAuthIsLoadingAction
 

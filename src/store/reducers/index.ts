@@ -1,6 +1,6 @@
 import auth  from "./auth";
-import additem from "./additem"
+import addItem from "./addItem"
 
 export default {
-    auth, additem
+    auth, addItem
 }

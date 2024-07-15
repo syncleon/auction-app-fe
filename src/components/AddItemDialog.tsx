@@ -1,28 +1,40 @@
-import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
-import {useActions} from "../hooks/useActions";
-import {RouteNames} from "../routes";
-import {useHistory} from "react-router-dom"; // Assuming Redux is used for state management
+import React, { useState, useEffect } from 'react';
+import { useActions } from "../hooks/useActions";
+import { RouteNames } from "../routes";
+import { useHistory } from "react-router-dom";
+import { useTypedSelector } from "../hooks/useTypedSelector";
+import { CircularProgress, Grid, Typography } from "@mui/material";
+import { message } from "antd";
 
 const AddItemDialog = () => {
-    const dispatch = useDispatch();
-
+    const { itemError, itemSuccess, itemIsLoading } = useTypedSelector(state => state.addItem);
     const [make, setMake] = useState('');
     const [model, setModel] = useState('');
     const [mileage, setMileage] = useState(0);
     const [year, setYear] = useState(0);
     const [images, setImages] = useState<FileList | null>(null);
-    const { additem } = useActions();
+    const { addItem, setItemSuccess, setItemIsError } = useActions();
     const history = useHistory();
 
+    useEffect(() => {
+        if (itemSuccess) {
+            message.success(itemSuccess);
+            clearForm();
+            history.push(RouteNames.PROFILE);
+            setItemSuccess('');
+        }
+    }, [itemSuccess, history, setItemSuccess]);
+
+    useEffect(() => {
+        if (itemError) {
+            message.error(itemError);
+            setItemIsError('');
+        }
+    }, [itemError, setItemIsError]);
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        // Dispatch additem action creator with form values
-       additem(make, model, mileage, year, images);
-        // Clear form or perform other actions after submission
-        clearForm();
-        history.push(RouteNames.PROFILE);
+        addItem(make, model, mileage, year, images);
     };
 
     const clearForm = () => {
@@ -32,6 +44,8 @@ const AddItemDialog = () => {
         setYear(0);
         setImages(null);
     };
+
+    const isFormValid = make && model && mileage > 0 && year > 0 ;
 
     return (
         <div>
@@ -57,7 +71,15 @@ const AddItemDialog = () => {
                     <label>Images:</label>
                     <input type="file" multiple onChange={(e) => setImages(e.target.files)} />
                 </div>
-                <button type="submit">Add Item</button>
+                {itemError && (
+                    <Grid item>
+                        <Typography variant="body2" color="error">
+                            {itemError}
+                        </Typography>
+                    </Grid>
+                )}
+                <button type="submit" disabled={!isFormValid}>Add Item</button>
+                {itemIsLoading && <CircularProgress />}
             </form>
         </div>
     );
