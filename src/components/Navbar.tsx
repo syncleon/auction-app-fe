@@ -11,7 +11,6 @@ import { useActions } from '../hooks/useActions';
 import BidLogo from '../resources/logo.svg';
 import LoginDialog from './LoginDialog';
 import RegDialog from "./RegDialog";
-import { message } from "antd";
 
 const Navbar: FC = () => {
     const history = useHistory();

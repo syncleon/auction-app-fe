@@ -6,12 +6,11 @@ import {
     SetAuthSuccessAction,
     SetUserAction
 } from "./types";
-import {IUser} from "../../../models/IUsers";
-import {AppDispatch} from "../../index";
+import { IUser } from "../../../models/IUsers";
+import { AppDispatch } from "../../index";
 import axios from "axios";
-import {apiInstance} from "../../../axios-instance";
-import {message} from "antd";
-
+import { message } from "antd";
+import { API_ENDPOINTS } from "../../../apiService";
 
 export const AuthActionCreators = {
     setUser: (user: IUser): SetUserAction => ({
@@ -40,7 +39,7 @@ export const AuthActionCreators = {
     login: (username: string, password: string) => async (dispatch: AppDispatch) => {
         try {
             dispatch(AuthActionCreators.setAuthIsLoading(true));
-            const response = await apiInstance.post<{ token: string }>('signin', {
+            const response = await axios.post<{ token: string }>(API_ENDPOINTS.SIGN_IN, {
                 username: username,
                 password: password,
             });
@@ -53,11 +52,11 @@ export const AuthActionCreators = {
             };
             localStorage.setItem('auth', 'true');
             localStorage.setItem('username', username);
-            localStorage.setItem('token', token)
+            localStorage.setItem('token', token);
             dispatch(AuthActionCreators.setIsAuth(true));
             dispatch(AuthActionCreators.setUser(user));
             dispatch(AuthActionCreators.setAuthIsLoading(false));
-            dispatch(AuthActionCreators.setAuthIsSuccess(`Welcome back, ${username}!`))
+            dispatch(AuthActionCreators.setAuthIsSuccess(`Welcome back, ${username}!`));
             dispatch(AuthActionCreators.setAuthIsError('')); // Reset error state on successful login
         } catch (error) {
             if (axios.isAxiosError(error) && error.response) {
@@ -70,23 +69,23 @@ export const AuthActionCreators = {
     },
 
     logout: () => async (dispatch: AppDispatch) => {
-        localStorage.removeItem('auth')
-        localStorage.removeItem('username')
-        localStorage.removeItem('token')
-        localStorage.removeItem('email')
+        localStorage.removeItem('auth');
+        localStorage.removeItem('username');
+        localStorage.removeItem('token');
+        localStorage.removeItem('email');
         dispatch(AuthActionCreators.setUser({} as IUser));
-        dispatch(AuthActionCreators.setIsAuth(false))
-        message.info(`Hope you're will return :)`)
+        dispatch(AuthActionCreators.setIsAuth(false));
+        message.info(`Hope you're will return :)`);
     },
 
     register: (username: string, email: string, password: string) => async (dispatch: AppDispatch) => {
         try {
             dispatch(AuthActionCreators.setAuthIsLoading(true));
-            const response = await apiInstance.post<{ token: string }>('signup', {
+            const response = await axios.post<{ token: string }>(API_ENDPOINTS.SIGNUP, {
                 username: username,
                 email: email,
                 password: password,
-            })
+            });
             const token = response.data.token;
             const user: IUser = {
                 username: username,
@@ -94,7 +93,7 @@ export const AuthActionCreators = {
             };
             localStorage.setItem('auth', 'true');
             localStorage.setItem('username', username);
-            localStorage.setItem('token', token)
+            localStorage.setItem('token', token);
             dispatch(AuthActionCreators.setIsAuth(true));
             dispatch(AuthActionCreators.setUser(user));
             dispatch(AuthActionCreators.setAuthIsLoading(false));
@@ -107,4 +106,4 @@ export const AuthActionCreators = {
             dispatch(AuthActionCreators.setAuthIsLoading(false));
         }
     }
-}
+};

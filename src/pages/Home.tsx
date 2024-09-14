@@ -1,9 +1,10 @@
 import React, {FC} from 'react';
+import HomeDialog from "../components/HomeDialog";
 
 
 const Home:FC = () => {
     return (
-       <div>HOME DIALOG</div>
+        <HomeDialog/>
     );
 }
 

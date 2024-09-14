@@ -1,5 +1,5 @@
 import { AppDispatch } from "../../index";
-import { apiInstance } from "../../../axios-instance";
+import { API_ENDPOINTS } from "../../../apiService";
 import { Item } from "../../../models/IItem";
 import axios from "axios";
 import {
@@ -53,7 +53,7 @@ export const AddItemActionCreators = {
                     'Content-Type': 'multipart/form-data'
                 };
 
-                const response = await apiInstance.post<Item>(`items`, formData, {headers});
+                const response = await axios.post<Item>(API_ENDPOINTS.ITEMS, formData, { headers });
                 const newItem: Item = response.data;
 
                 dispatch(AddItemActionCreators.setItem(newItem));
@@ -61,7 +61,7 @@ export const AddItemActionCreators = {
             } catch (error) {
                 if (axios.isAxiosError(error) && error.response) {
                     const statusText = error.response.data.message;
-                    dispatch(AddItemActionCreators.setItemIsError(statusText))
+                    dispatch(AddItemActionCreators.setItemIsError(statusText));
                 }
             } finally {
                 dispatch(AddItemActionCreators.setItemIsLoading(false));
