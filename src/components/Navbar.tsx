@@ -1,10 +1,8 @@
-// Navbar.tsx
-
 import React, { FC, useState } from 'react';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Button from '@mui/material/Button';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate for navigation
 import { RouteNames } from '../routes';
 import { useTypedSelector } from '../hooks/useTypedSelector';
 import { useActions } from '../hooks/useActions';
@@ -13,7 +11,7 @@ import LoginDialog from './LoginDialog';
 import RegDialog from "./RegDialog";
 
 const Navbar: FC = () => {
-    const history = useHistory();
+    const navigate = useNavigate(); // Replace useHistory with useNavigate
     const { logout } = useActions();
     const { isAuth, user } = useTypedSelector(state => state.auth);
     const [openLoginDialog, setOpenLoginDialog] = useState(false);
@@ -21,7 +19,7 @@ const Navbar: FC = () => {
 
     const handleAddClick = () => {
         if (isAuth) {
-            history.push(RouteNames.ADD);
+            navigate(RouteNames.ADD); // Use navigate instead of history.push
         } else {
             setOpenRegDialog(true);
         }
@@ -38,16 +36,16 @@ const Navbar: FC = () => {
     };
 
     const handleAppLogoClick = () => {
-        history.push(RouteNames.HOME);
+        navigate(RouteNames.HOME); // Use navigate instead of history.push
     };
 
     const handleUsernameClick = () => {
-        history.push(RouteNames.PROFILE);
+        navigate(RouteNames.PROFILE); // Use navigate instead of history.push
     };
 
     const handleLogoutClick = () => {
         logout();
-        history.push(RouteNames.HOME);
+        navigate(RouteNames.HOME); // Use navigate instead of history.push
     };
 
     const handleCloseLoginDialog = () => {
@@ -76,7 +74,7 @@ const Navbar: FC = () => {
                         <div>
                             <Button onClick={handleAddClick} sx={{ color: 'black', textTransform: 'none', fontSize: '16px' }}>Sell a Car</Button>
                             <Button onClick={handleUsernameClick} sx={{ color: 'black', textTransform: 'none', fontSize: '16px' }}>{user.username}</Button>
-                            <Button onClick={handleLogoutClick} sx={{ color: 'black', textTransform: 'none', fontSize: '16px' }}>logout</Button>
+                            <Button onClick={handleLogoutClick} sx={{ color: 'black', textTransform: 'none', fontSize: '16px' }}>Logout</Button>
                         </div>
                     ) : (
                         <div>

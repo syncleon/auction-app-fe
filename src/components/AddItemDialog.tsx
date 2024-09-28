@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useActions } from "../hooks/useActions";
 import { RouteNames } from "../routes";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom"; // Import useNavigate for navigation
 import { useTypedSelector } from "../hooks/useTypedSelector";
 import { CircularProgress, Grid, Typography } from "@mui/material";
 import { message } from "antd";
@@ -14,16 +14,16 @@ const AddItemDialog = () => {
     const [year, setYear] = useState(0);
     const [images, setImages] = useState<FileList | null>(null);
     const { addItem, setItemSuccess, setItemIsError } = useActions();
-    const history = useHistory();
+    const navigate = useNavigate(); // Replace useHistory with useNavigate
 
     useEffect(() => {
         if (itemSuccess) {
             message.success(itemSuccess);
             clearForm();
-            history.push(RouteNames.PROFILE);
+            navigate(RouteNames.PROFILE); // Use navigate instead of history.push
             setItemSuccess('');
         }
-    }, [itemSuccess, history, setItemSuccess]);
+    }, [itemSuccess, navigate, setItemSuccess]);
 
     useEffect(() => {
         if (itemError) {
@@ -45,7 +45,7 @@ const AddItemDialog = () => {
         setImages(null);
     };
 
-    const isFormValid = make && model && mileage > 0 && year > 0 ;
+    const isFormValid = make && model && mileage > 0 && year > 0;
 
     return (
         <div>

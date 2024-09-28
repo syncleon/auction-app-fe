@@ -19,6 +19,14 @@ body, html {
     flex: 1;
     overflow-y: auto; /* Enables vertical scrolling */
     overflow-x: hidden; /* Hides horizontal scrollbar */
+
+    /* Hide scrollbar for Chrome, Safari, and Edge */
+    &::-webkit-scrollbar {
+        display: none;
+    }
+
+    /* Hide scrollbar for Firefox */
+    scrollbar-width: none; /* Firefox */
 }
 
 .logo:hover {

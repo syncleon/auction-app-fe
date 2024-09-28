@@ -31,40 +31,53 @@ export const AddItemActionCreators = {
         payload: itemMessage
     }),
 
-    addItem: (make: string, model: string, mileage: number, year: number, images: FileList | null) =>
-        async (dispatch: AppDispatch) => {
-            try {
-                dispatch(AddItemActionCreators.setItemIsLoading(true));
+    addItem: (
+        make: string,
+        model: string,
+        mileage: number,
+        year: number,
+        images: FileList | null
+    ) => async (dispatch: AppDispatch) => {
+        try {
+            dispatch(AddItemActionCreators.setItemIsLoading(true));
 
-                const payloadData = {
-                    make: make,
-                    model: model,
-                    mileage: mileage,
-                    year: year
-                };
+            const payloadData = {
+                make: make,
+                model: model,
+                mileage: mileage,
+                year: year
+            };
 
-                const formData = new FormData();
-                formData.append('images', images ? images[0] : '');
-                formData.append("payload", new Blob([JSON.stringify(payloadData)], {type: "application/json"}));
+            const formData = new FormData();
 
-                const token = localStorage.getItem("token");
-                const headers = {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'multipart/form-data'
-                };
-
-                const response = await axios.post<Item>(API_ENDPOINTS.ITEMS, formData, { headers });
-                const newItem: Item = response.data;
-
-                dispatch(AddItemActionCreators.setItem(newItem));
-                dispatch(AddItemActionCreators.setItemSuccess('Item Added Successfully!'));
-            } catch (error) {
-                if (axios.isAxiosError(error) && error.response) {
-                    const statusText = error.response.data.message;
-                    dispatch(AddItemActionCreators.setItemIsError(statusText));
+            // Append each image in the FileList
+            if (images) {
+                for (let i = 0; i < images.length; i++) {
+                    formData.append('images', images[i]);
                 }
-            } finally {
-                dispatch(AddItemActionCreators.setItemIsLoading(false));
             }
+
+            // Add payload data as JSON blob
+            formData.append("payload", new Blob([JSON.stringify(payloadData)], {type: "application/json"}));
+
+            const token = localStorage.getItem("token");
+            const headers = {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'multipart/form-data'
+            };
+
+            const response = await axios.post<Item>(API_ENDPOINTS.ITEMS, formData, { headers });
+            const newItem: Item = response.data;
+
+            dispatch(AddItemActionCreators.setItem(newItem));
+            dispatch(AddItemActionCreators.setItemSuccess('Item Added Successfully!'));
+        } catch (error) {
+            if (axios.isAxiosError(error) && error.response) {
+                const statusText = error.response.data.message;
+                dispatch(AddItemActionCreators.setItemIsError(statusText));
+            }
+        } finally {
+            dispatch(AddItemActionCreators.setItemIsLoading(false));
         }
+    }
 };

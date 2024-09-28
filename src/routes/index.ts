@@ -2,6 +2,7 @@ import React from "react";
 import Profile from "../pages/Profile";
 import Home from "../pages/Home";
 import AddItem from "../pages/AddItem";
+import ItemDetails from "../pages/ItemDetails";
 
 export interface IRoute {
     path: string;
@@ -13,14 +14,17 @@ export enum RouteNames{
     PROFILE = '/profile',
     HOME = '/',
     ADD = '/add',
+    ITEM_DETAILS = '/items/:id'
 }
 
 export const publicRoutes: IRoute[] = [
     {path: RouteNames.HOME, exact: true, component: Home},
+    {path: RouteNames.ITEM_DETAILS, exact: true, component: ItemDetails},
 ]
 
 export const privateRoutes: IRoute[] = [
     {path: RouteNames.PROFILE, exact: true, component: Profile},
     {path: RouteNames.HOME, exact: true, component: Home},
     {path: RouteNames.ADD, exact: true, component: AddItem},
+    {path: RouteNames.ITEM_DETAILS, exact: true, component: ItemDetails},
 ]

@@ -1,34 +1,33 @@
 import React from 'react';
-import {Switch, Route, Redirect} from 'react-router-dom';
-import {privateRoutes, publicRoutes, RouteNames} from "../routes";
-import {useTypedSelector} from "../hooks/useTypedSelector";
+import { Routes, Route, Navigate } from 'react-router-dom';
+import { privateRoutes, publicRoutes, RouteNames } from "../routes";
+import { useTypedSelector } from "../hooks/useTypedSelector";
 
-const AppRouter = () => {
-    const {isAuth} = useTypedSelector(state => state.auth )
+const AppRouter: React.FC = () => {
+    const { isAuth } = useTypedSelector(state => state.auth);
+
     return (
-        isAuth
-            ?
-            <Switch>
-                {privateRoutes.map(route =>
-                    <Route path={route.path}
-                           exact={route.exact}
-                           component={route.component}
-                           key={route.path}
+        <Routes>
+            {isAuth
+                ? privateRoutes.map(route => (
+                    <Route
+                        path={route.path}
+                        element={<route.component />}
+                        key={route.path}
                     />
-                )}
-                <Redirect to={RouteNames.HOME}/>
-            </Switch>
-            :
-            <Switch>
-                {publicRoutes.map(route =>
-                    <Route path={route.path}
-                           exact={route.exact}
-                           component={route.component}
-                           key={route.path}
+                ))
+                : publicRoutes.map(route => (
+                    <Route
+                        path={route.path}
+                        element={<route.component />}
+                        key={route.path}
                     />
-                )}
-            </Switch>
+                ))
+            }
+            {/* Redirect to home in case of no matching route */}
+            <Route path="*" element={<Navigate to={RouteNames.HOME} />} />
+        </Routes>
     );
 };
 
-export default AppRouter
+export default AppRouter;
