@@ -1,0 +1,42 @@
+/* ItemDetailsDialog.css */
+
+.container {
+    padding: 16px; /* Add some padding to the container */
+}
+
+h2 {
+    font-size: 24px;
+    margin-bottom: 8px;
+}
+
+h3 {
+    font-size: 20px;
+    margin: 16px 0 8px;
+}
+
+p {
+    margin: 8px 0;
+}
+
+.images-container {
+    display: flex;
+    flex-wrap: wrap; /* Allows images to wrap to the next line */
+    gap: 16px; /* Adds space between images */
+}
+
+.images-container img {
+    max-width: calc(100% / 3 - 16px); /* Adjusts image width (3 images per row) */
+    height: auto; /* Keeps aspect ratio */
+    border: 1px solid #ddd; /* Optional: adds a border to images */
+    border-radius: 4px; /* Optional: rounded corners */
+}
+
+.images-container img:hover {
+    transform: scale(1.05); /* Optional: scale effect on hover */
+    transition: transform 0.3s; /* Smooth transition for hover effect */
+}
+
+.no-images {
+    color: #888; /* Style for "No images available" message */
+    font-style: italic;
+}

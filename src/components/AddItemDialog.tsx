@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useActions } from "../hooks/useActions";
 import { RouteNames } from "../routes";
-import { useNavigate } from "react-router-dom"; // Import useNavigate for navigation
+import { useNavigate } from "react-router-dom";
 import { useTypedSelector } from "../hooks/useTypedSelector";
-import { CircularProgress, Grid, Typography } from "@mui/material";
+import { CircularProgress } from "@mui/material";
 import { message } from "antd";
 
 const AddItemDialog = () => {
@@ -12,15 +12,19 @@ const AddItemDialog = () => {
     const [model, setModel] = useState('');
     const [mileage, setMileage] = useState(0);
     const [year, setYear] = useState(0);
-    const [images, setImages] = useState<FileList | null>(null);
+    const [featuredImages, setFeaturedImages] = useState<FileList | null>(null);
+    const [exteriorImages, setExteriorImages] = useState<FileList | null>(null);
+    const [interiorImages, setInteriorImages] = useState<FileList | null>(null);
+    const [mechanicalImages, setMechanicalImages] = useState<FileList | null>(null);
+    const [otherImages, setOtherImages] = useState<FileList | null>(null);
     const { addItem, setItemSuccess, setItemIsError } = useActions();
-    const navigate = useNavigate(); // Replace useHistory with useNavigate
+    const navigate = useNavigate();
 
     useEffect(() => {
         if (itemSuccess) {
             message.success(itemSuccess);
             clearForm();
-            navigate(RouteNames.PROFILE); // Use navigate instead of history.push
+            navigate(RouteNames.PROFILE);
             setItemSuccess('');
         }
     }, [itemSuccess, navigate, setItemSuccess]);
@@ -34,7 +38,13 @@ const AddItemDialog = () => {
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        addItem(make, model, mileage, year, images);
+        addItem(make, model, mileage, year, {
+            featured: featuredImages,
+            exterior: exteriorImages,
+            interior: interiorImages,
+            mechanical: mechanicalImages,
+            other: otherImages,
+        });
     };
 
     const clearForm = () => {
@@ -42,10 +52,15 @@ const AddItemDialog = () => {
         setModel('');
         setMileage(0);
         setYear(0);
-        setImages(null);
+        setFeaturedImages(null);
+        setExteriorImages(null);
+        setInteriorImages(null);
+        setMechanicalImages(null);
+        setOtherImages(null);
     };
 
-    const isFormValid = make && model && mileage > 0 && year > 0;
+    // Updated validation to check for featured images
+    const isFormValid = make && model && mileage > 0 && year > 0 && (featuredImages ? featuredImages.length > 0 : false);
 
     return (
         <div>
@@ -68,16 +83,25 @@ const AddItemDialog = () => {
                     <input type="number" value={year} onChange={(e) => setYear(parseInt(e.target.value))} />
                 </div>
                 <div>
-                    <label>Images:</label>
-                    <input type="file" multiple onChange={(e) => setImages(e.target.files)} />
+                    <label>Featured Images:</label>
+                    <input type="file" multiple onChange={(e) => setFeaturedImages(e.target.files)} />
                 </div>
-                {itemError && (
-                    <Grid item>
-                        <Typography variant="body2" color="error">
-                            {itemError}
-                        </Typography>
-                    </Grid>
-                )}
+                <div>
+                    <label>Exterior Images:</label>
+                    <input type="file" multiple onChange={(e) => setExteriorImages(e.target.files)} />
+                </div>
+                <div>
+                    <label>Interior Images:</label>
+                    <input type="file" multiple onChange={(e) => setInteriorImages(e.target.files)} />
+                </div>
+                <div>
+                    <label>Mechanical Images:</label>
+                    <input type="file" multiple onChange={(e) => setMechanicalImages(e.target.files)} />
+                </div>
+                <div>
+                    <label>Other Images:</label>
+                    <input type="file" multiple onChange={(e) => setOtherImages(e.target.files)} />
+                </div>
                 <button type="submit" disabled={!isFormValid}>Add Item</button>
                 {itemIsLoading && <CircularProgress />}
             </form>

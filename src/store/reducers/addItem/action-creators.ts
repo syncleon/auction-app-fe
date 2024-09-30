@@ -36,7 +36,7 @@ export const AddItemActionCreators = {
         model: string,
         mileage: number,
         year: number,
-        images: FileList | null
+        images: { featured: FileList | null, exterior: FileList | null, interior: FileList | null, mechanical: FileList | null, other: FileList | null }
     ) => async (dispatch: AppDispatch) => {
         try {
             dispatch(AddItemActionCreators.setItemIsLoading(true));
@@ -50,15 +50,17 @@ export const AddItemActionCreators = {
 
             const formData = new FormData();
 
-            // Append each image in the FileList
-            if (images) {
-                for (let i = 0; i < images.length; i++) {
-                    formData.append('images', images[i]);
+            // Add payload data as JSON blob
+            formData.append("payload", new Blob([JSON.stringify(payloadData)], { type: "application/json" }));
+
+            // Append each category of images
+            for (const [category, files] of Object.entries(images)) {
+                if (files) {
+                    for (let i = 0; i < files.length; i++) {
+                        formData.append(`images_${category}`, files[i]);
+                    }
                 }
             }
-
-            // Add payload data as JSON blob
-            formData.append("payload", new Blob([JSON.stringify(payloadData)], {type: "application/json"}));
 
             const token = localStorage.getItem("token");
             const headers = {
@@ -73,7 +75,7 @@ export const AddItemActionCreators = {
             dispatch(AddItemActionCreators.setItemSuccess('Item Added Successfully!'));
         } catch (error) {
             if (axios.isAxiosError(error) && error.response) {
-                const statusText = error.response.data.message;
+                const statusText = error.response.data;
                 dispatch(AddItemActionCreators.setItemIsError(statusText));
             }
         } finally {

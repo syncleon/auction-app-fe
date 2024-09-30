@@ -1,10 +1,10 @@
 import React from 'react';
-import ItemDetailsComponent from "../components/ItemDetailsComponent";
+import ItemDetailsDialog from "../components/ItemDetailsDialog";
 
 const ItemDetails = () => {
     return (
         <div>
-            <ItemDetailsComponent/>
+            <ItemDetailsDialog />
         </div>
     );
 };
