@@ -1,0 +1,87 @@
+.add-item-dialog {
+    padding: 20px;
+    max-width: 600px;
+    margin: auto;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.title {
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.stepper {
+    margin-bottom: 20px;
+}
+
+.step-label {
+    cursor: pointer;
+    /* Other existing styles */
+}
+
+.step-label.completed {
+    color: green; /* Color for completed steps */
+}
+
+.step-label.current {
+    color: #ff0000; /* Color for the current step */
+}
+
+.upload-icon {
+    margin-right: 10px;
+}
+
+.next-button, .back-button, .submit-button {
+    margin-top: 20px;
+}
+
+.form-container {
+    display: flex;
+    flex-direction: column;
+}
+
+.step-content {
+    margin-bottom: 20px;
+}
+
+.step-title {
+    margin-bottom: 10px;
+}
+
+.file-upload {
+    display: flex;
+    align-items: center;
+    margin: 10px 0;
+    cursor: pointer;
+    border: 2px dashed #ccc;
+    padding: 20px;
+    border-radius: 4px;
+    text-align: center;
+}
+
+.upload-icon {
+    margin-right: 10px;
+}
+
+.button-group {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+}
+
+.back-button, .next-button, .submit-button {
+    margin-top: 10px;
+}
+
+.loading-spinner {
+    margin: 20px auto;
+    display: block;
+}
+
+.summary {
+    margin-top: 10px;
+    font-weight: normal;
+    color: #555;
+}

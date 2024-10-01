@@ -34,8 +34,8 @@ export const AddItemActionCreators = {
     addItem: (
         make: string,
         model: string,
-        mileage: number,
-        year: number,
+        mileage: string,
+        year: string,
         images: { featured: FileList | null, exterior: FileList | null, interior: FileList | null, mechanical: FileList | null, other: FileList | null }
     ) => async (dispatch: AppDispatch) => {
         try {
