@@ -1,8 +1,9 @@
 import React, {FC} from 'react';
+import ProfileDialog from "../components/ProfileDialog";
 
 const Profile:FC = () => {
     return (
-        <div>PROFILE DIALOG</div>
+       <ProfileDialog/>
     );
 };
 

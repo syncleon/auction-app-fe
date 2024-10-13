@@ -4,5 +4,5 @@ export const API_ENDPOINTS = {
     SIGN_IN: `${BASE_URL}/signin`,
     SIGNUP: `${BASE_URL}/signup`,
     ITEMS: `${BASE_URL}/items`,
-    ITEM_IMAGE_0: (id: string) => `${BASE_URL}/items/${id}/images/0`
+    CURRENT_USER_ITEMS : `${BASE_URL}/users/current/items`,
 };
