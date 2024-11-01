@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Typography } from "@mui/material";
+import { Typography } from "@mui/material";
 import { CloudUpload } from '@mui/icons-material';
 
 interface InteriorImageDialogProps {
@@ -8,19 +8,16 @@ interface InteriorImageDialogProps {
     nextStep: () => void;
 }
 
-const InteriorImageDialog: React.FC<InteriorImageDialogProps> = ({ setInteriorImages, prevStep, nextStep }) => {
+const InteriorImageDialog: React.FC<InteriorImageDialogProps> = ({ setInteriorImages }) => {
     return (
         <div className="step-content">
-            <Typography variant="h6" className="step-title">Interior Images</Typography>
+            <Typography variant="h6" className="step-title">Add some interior images...</Typography>
             <label className="file-upload">
                 <input type="file" multiple onChange={(e) => setInteriorImages(e.target.files)} />
                 <CloudUpload className="upload-icon" />
                 <span>Upload Interior Images</span>
             </label>
-            <div className="button-group">
-                <Button onClick={prevStep} className="back-button">Back</Button>
-                <Button variant="contained" className="next-button" onClick={nextStep}>Next</Button>
-            </div>
+            {/* Removed the button group containing Next and Back buttons */}
         </div>
     );
 };

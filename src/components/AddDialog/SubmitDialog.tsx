@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, CircularProgress, Typography } from "@mui/material";
+import { Button, CircularProgress, Typography, Box, Paper } from "@mui/material";
 
 interface SubmitDialogProps {
     itemIsLoading: boolean;
@@ -8,18 +8,31 @@ interface SubmitDialogProps {
 
 const SubmitDialog: React.FC<SubmitDialogProps> = ({ itemIsLoading, prevStep }) => {
     return (
-        <div className="step-content">
-            <Typography variant="h6" className="step-title">Submit</Typography>
-            {itemIsLoading ? (
-                <CircularProgress />
-            ) : (
-                <Typography variant="body1">Are you ready to submit your item?</Typography>
-            )}
-            <div className="button-group">
-                <Button onClick={prevStep} className="back-button">Back</Button>
-                <Button variant="contained" className="next-button" type="submit" disabled={itemIsLoading}>Submit</Button>
-            </div>
-        </div>
+        <Paper elevation={3} className="step-content" style={{ padding: '24px', borderRadius: '8px' }}>
+            <Typography variant="h6" className="step-title" style={{ marginBottom: '16px', textAlign: 'center' }}>
+                Submit
+            </Typography>
+            <Box display="flex" flexDirection="column" alignItems="center">
+                {itemIsLoading ? (
+                    <CircularProgress />
+                ) : (
+                    <Typography variant="body1" style={{ textAlign: 'center', marginBottom: '20px' }}>
+                        Are you ready to submit your item?
+                    </Typography>
+                )}
+            </Box>
+            <Box display="flex" justifyContent="center">
+                <Button
+                    variant="contained"
+                    className="next-button"
+                    type="submit"
+                    disabled={itemIsLoading}
+                    style={{ padding: '10px 20px' }}
+                >
+                    Submit
+                </Button>
+            </Box>
+        </Paper>
     );
 };
 

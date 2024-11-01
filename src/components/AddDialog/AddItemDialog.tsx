@@ -3,25 +3,36 @@ import { useActions } from "../../hooks/useActions";
 import { RouteNames } from "../../routes";
 import { useNavigate } from "react-router-dom";
 import { useTypedSelector } from "../../hooks/useTypedSelector";
-import { CircularProgress, Button, Typography, Stepper, Step } from "@mui/material";
+import { Typography, Stepper, Step } from "@mui/material";
 import { message } from "antd";
 import './AddItemDialog.css';
-import GeneralInfoDialog from './GeneralInfoDialog';
+import CarDetailsDialog from './CarDetailsDialog';
 import FeaturedImageDialog from './FeaturedImageDialog';
 import ExteriorImageDialog from './ExteriorImageDialog';
 import InteriorImageDialog from './InteriorImageDialog';
 import MechanicalImageDialog from './MechanicalImageDialog';
 import OtherImageDialog from './OtherImageDialog';
 import SubmitDialog from './SubmitDialog';
+import { Item } from "../../models/IItem";
 
+// Import icons from Material-UI
+import CarIcon from '@mui/icons-material/DirectionsCar';
+import FeaturedImageIcon from '@mui/icons-material/Image';
+import ExteriorImageIcon from '@mui/icons-material/CameraAlt';
+import InteriorImageIcon from '@mui/icons-material/Photo';
+import MechanicalImageIcon from '@mui/icons-material/Build';
+import OtherImageIcon from '@mui/icons-material/MoreHoriz';
+import SubmitIcon from '@mui/icons-material/CheckCircle';
+
+// Define steps with icons
 const steps = [
-    'General Info',
-    'Featured Image',
-    'Exterior Images',
-    'Interior Images',
-    'Mechanical Images',
-    'Other Images',
-    'Submit'
+    { label: 'Car Details', icon: <CarIcon /> },
+    { label: 'Featured Image', icon: <FeaturedImageIcon /> },
+    { label: 'Exterior Images', icon: <ExteriorImageIcon /> },
+    { label: 'Interior Images', icon: <InteriorImageIcon /> },
+    { label: 'Mechanical Images', icon: <MechanicalImageIcon /> },
+    { label: 'Other Images', icon: <OtherImageIcon /> },
+    { label: 'Submit', icon: <SubmitIcon /> },
 ];
 
 const AddItemDialog = () => {
@@ -29,10 +40,27 @@ const AddItemDialog = () => {
     const { addItem, setItemSuccess, setItemIsError } = useActions();
     const navigate = useNavigate();
 
-    const [make, setMake] = useState('');
-    const [model, setModel] = useState('');
-    const [mileage, setMileage] = useState('');
-    const [year, setYear] = useState('');
+    // Initial state for item based on the Item interface
+    const [item, setItem] = useState<Item>({
+        id: '',
+        make: '',
+        model: '',
+        mileage: '',
+        year: '',
+        price: '',
+        color: '',
+        engineSize: '',
+        fuelType: '',
+        transmissionType: '',
+        condition: '',
+        location: '',
+        description: '',
+        vin: '',
+        onAuction: false,
+        isSold: false,
+        images: []
+    });
+
     const [featuredImages, setFeaturedImages] = useState<FileList | null>(null);
     const [exteriorImages, setExteriorImages] = useState<FileList | null>(null);
     const [interiorImages, setInteriorImages] = useState<FileList | null>(null);
@@ -58,20 +86,50 @@ const AddItemDialog = () => {
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        addItem(make, model, mileage, year, {
-            featured: featuredImages,
-            exterior: exteriorImages,
-            interior: interiorImages,
-            mechanical: mechanicalImages,
-            other: otherImages,
-        });
+        addItem(
+            item.make,
+            item.model,
+            item.mileage,
+            item.year,
+            item.price,
+            item.color,
+            item.engineSize,
+            item.fuelType,
+            item.transmissionType,
+            item.condition,
+            item.location,
+            item.description,
+            item.vin,
+            {
+                featured: featuredImages,
+                exterior: exteriorImages,
+                interior: interiorImages,
+                mechanical: mechanicalImages,
+                other: otherImages,
+            }
+        );
     };
 
     const clearForm = () => {
-        setMake('');
-        setModel('');
-        setMileage('');
-        setYear('');
+        setItem({
+            id: '',
+            make: '',
+            model: '',
+            mileage: '',
+            year: '',
+            price: '',
+            color: '',
+            engineSize: '',
+            fuelType: '',
+            transmissionType: '',
+            condition: '',
+            location: '',
+            description: '',
+            vin: '',
+            onAuction: false,
+            isSold: false,
+            images: []
+        });
         setFeaturedImages(null);
         setExteriorImages(null);
         setInteriorImages(null);
@@ -79,43 +137,44 @@ const AddItemDialog = () => {
         setOtherImages(null);
     };
 
-    const nextStep = () => setStep((prevStep) => prevStep + 1);
-    const prevStep = () => setStep((prevStep) => prevStep - 1);
+    const nextStep = () => setStep((prevStep) => Math.min(prevStep + 1, steps.length - 1)); // Prevent exceeding the step count
+    const prevStep = () => setStep((prevStep) => Math.max(prevStep - 1, 0)); // Prevent going below 0
 
     const handleStepClick = (index: number) => {
-        // Only allow navigating to previous steps or the current step
-        if (index <= step) {
+        // Allow navigation to any completed step
+        if (index <= steps.length - 1) {
             setStep(index);
         }
     };
 
-    const completedSteps = step; // All steps before the current step are completed
+    const completedSteps = step;
 
     return (
         <div className="add-item-dialog">
             <Stepper activeStep={step} className="stepper">
-                {steps.map((label, index) => (
-                    <Step key={label} completed={index < completedSteps} onClick={() => handleStepClick(index)}>
-                        <Typography
-                            className={`step-label ${index < completedSteps ? 'completed' : ''} ${index === step ? 'current' : ''}`}
-                        >
-                            {label}
-                        </Typography>
+                {steps.map((stepData, index) => (
+                    <Step
+                        key={stepData.label}
+                        completed={index < completedSteps}
+                        onClick={() => handleStepClick(index)} // Handle step click
+                        style={{ cursor: index <= completedSteps ? 'pointer' : 'default' }} // Change cursor based on completion
+                    >
+                        <div className="step-content">
+                            {stepData.icon}
+                            <Typography
+                                className={`step-label ${index < completedSteps ? 'completed' : ''} ${index === step ? 'current' : ''}`}
+                            >
+                                {stepData.label}
+                            </Typography>
+                        </div>
                     </Step>
                 ))}
             </Stepper>
             <form onSubmit={handleSubmit} className="form-container">
-                {/* Step Contents */}
                 {step === 0 && (
-                    <GeneralInfoDialog
-                        make={make}
-                        setMake={setMake}
-                        model={model}
-                        setModel={setModel}
-                        mileage={mileage}
-                        setMileage={setMileage}
-                        year={year}
-                        setYear={setYear}
+                    <CarDetailsDialog
+                        item={item}
+                        setItem={setItem}
                         nextStep={nextStep}
                     />
                 )}

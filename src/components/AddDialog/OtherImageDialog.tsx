@@ -1,5 +1,6 @@
 import React from 'react';
-import { Button, Typography } from "@mui/material";
+import { useDropzone } from 'react-dropzone';
+import { Typography, Box, Paper } from "@mui/material";
 import { CloudUpload } from '@mui/icons-material';
 
 interface OtherImageDialogProps {
@@ -8,19 +9,32 @@ interface OtherImageDialogProps {
     nextStep: () => void;
 }
 
-const OtherImageDialog: React.FC<OtherImageDialogProps> = ({ setOtherImages, prevStep, nextStep }) => {
+const OtherImageDialog: React.FC<OtherImageDialogProps> = ({ setOtherImages }) => {
+    const onDrop = (acceptedFiles: File[]) => {
+        const dataTransfer = new DataTransfer();
+        acceptedFiles.forEach((file) => dataTransfer.items.add(file));
+        setOtherImages(dataTransfer.files);
+    };
+
+    const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop, multiple: true });
+
     return (
         <div className="step-content">
-            <Typography variant="h6" className="step-title">Other Images</Typography>
-            <label className="file-upload">
-                <input type="file" multiple onChange={(e) => setOtherImages(e.target.files)} />
-                <CloudUpload className="upload-icon" />
-                <span>Upload Other Images</span>
-            </label>
-            <div className="button-group">
-                <Button onClick={prevStep} className="back-button">Back</Button>
-                <Button variant="contained" className="next-button" onClick={nextStep}>Next</Button>
-            </div>
+            <Typography variant="h6" className="step-title">Add some other images, books, damaged parts, etc.</Typography>
+
+            <Paper variant="outlined" className="file-upload" {...getRootProps()}>
+                <input {...getInputProps()} />
+                <Box display="flex" flexDirection="column" alignItems="center" justifyContent="center" p={3}>
+                    <CloudUpload fontSize="large" className="upload-icon" />
+                    {isDragActive ? (
+                        <Typography variant="body2" color="primary">Drop images here...</Typography>
+                    ) : (
+                        <Typography variant="body2">Drag and drop images here, or click to upload</Typography>
+                    )}
+                </Box>
+            </Paper>
+
+            {/* Removed the button group containing Next and Back buttons */}
         </div>
     );
 };

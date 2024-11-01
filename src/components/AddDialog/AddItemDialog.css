@@ -1,78 +1,82 @@
 .add-item-dialog {
-    padding: 20px;
-    max-width: 600px;
+    padding: 30px;
+    max-width: 700px;
     margin: auto;
-    background-color: #f9f9f9;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    background-color: #ffffff; /* Clean white background */
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
 }
 
 .title {
-    margin-bottom: 20px;
+    margin-bottom: 30px;
     text-align: center;
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
 }
 
 .stepper {
-    margin-bottom: 20px;
+    margin-bottom: 30px;
 }
 
 .step-label {
     cursor: pointer;
-    /* Other existing styles */
+    font-weight: 500;
+    color: black; /* Default color for all steps */
 }
 
 .step-label.completed {
-    color: green; /* Color for completed steps */
+    color: black; /* Keep the color same for completed steps */
 }
 
 .step-label.current {
-    color: #ff0000; /* Color for the current step */
-}
-
-.upload-icon {
-    margin-right: 10px;
-}
-
-.next-button, .back-button, .submit-button {
-    margin-top: 20px;
-}
-
-.form-container {
-    display: flex;
-    flex-direction: column;
-}
-
-.step-content {
-    margin-bottom: 20px;
-}
-
-.step-title {
-    margin-bottom: 10px;
-}
-
-.file-upload {
-    display: flex;
-    align-items: center;
-    margin: 10px 0;
-    cursor: pointer;
-    border: 2px dashed #ccc;
-    padding: 20px;
-    border-radius: 4px;
-    text-align: center;
-}
-
-.upload-icon {
-    margin-right: 10px;
+    font-weight: bold; /* Optionally make the current step bold */
+    color: #ff5722; /* Accent color for the current step */
 }
 
 .button-group {
     display: flex;
     justify-content: space-between;
-    margin-top: 10px;
+    margin-top: 20px;
 }
 
-.back-button, .next-button, .submit-button {
-    margin-top: 10px;
+.back-button,
+.next-button,
+.submit-button {
+    margin-top: 20px;
+    padding: 10px 20px;
+    border-radius: 8px;
+    border: none;
+    font-size: 16px;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+.back-button {
+    background-color: #f44336; /* Red */
+    color: white;
+}
+
+.back-button:hover {
+    background-color: #d32f2f; /* Darker red */
+}
+
+.next-button {
+    background-color: #2196f3; /* Blue */
+    color: white;
+}
+
+.next-button:hover {
+    background-color: #1976d2; /* Darker blue */
+}
+
+.submit-button {
+    background-color: #4caf50; /* Green */
+    color: white;
+}
+
+.submit-button:hover {
+    background-color: #388e3c; /* Darker green */
 }
 
 .loading-spinner {
@@ -81,7 +85,7 @@
 }
 
 .summary {
-    margin-top: 10px;
+    margin-top: 20px;
     font-weight: normal;
     color: #555;
 }

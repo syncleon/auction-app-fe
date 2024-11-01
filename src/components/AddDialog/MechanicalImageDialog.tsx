@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Typography } from "@mui/material";
+import { Typography } from "@mui/material";
 import { CloudUpload } from '@mui/icons-material';
 
 interface MechanicalImageDialogProps {
@@ -8,19 +8,16 @@ interface MechanicalImageDialogProps {
     nextStep: () => void;
 }
 
-const MechanicalImageDialog: React.FC<MechanicalImageDialogProps> = ({ setMechanicalImages, prevStep, nextStep }) => {
+const MechanicalImageDialog: React.FC<MechanicalImageDialogProps> = ({ setMechanicalImages }) => {
     return (
         <div className="step-content">
-            <Typography variant="h6" className="step-title">Mechanical Images</Typography>
+            <Typography variant="h6" className="step-title">Add some mechanical images, engine, exhaust, etc..</Typography>
             <label className="file-upload">
                 <input type="file" multiple onChange={(e) => setMechanicalImages(e.target.files)} />
                 <CloudUpload className="upload-icon" />
                 <span>Upload Mechanical Images</span>
             </label>
-            <div className="button-group">
-                <Button onClick={prevStep} className="back-button">Back</Button>
-                <Button variant="contained" className="next-button" onClick={nextStep}>Next</Button>
-            </div>
+            {/* Removed the button group containing Next and Back buttons */}
         </div>
     );
 };

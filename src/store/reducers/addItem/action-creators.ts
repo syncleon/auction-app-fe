@@ -36,16 +36,34 @@ export const AddItemActionCreators = {
         model: string,
         mileage: string,
         year: string,
+        price: string,  // Added price
+        color: string,   // Added color
+        engineSize: string, // Added engineSize
+        fuelType: string, // Added fuelType
+        transmissionType: string, // Added transmissionType
+        condition: string, // Added condition
+        location: string, // Added location
+        description: string, // Added description
+        vin: string, // Added vin
         images: { featured: FileList | null, exterior: FileList | null, interior: FileList | null, mechanical: FileList | null, other: FileList | null }
     ) => async (dispatch: AppDispatch) => {
         try {
             dispatch(AddItemActionCreators.setItemIsLoading(true));
 
             const payloadData = {
-                make: make,
-                model: model,
-                mileage: mileage,
-                year: year
+                make,
+                model,
+                mileage,
+                year,
+                price,  // Include price in the payload
+                color,   // Include color in the payload
+                engineSize, // Include engineSize in the payload
+                fuelType, // Include fuelType in the payload
+                transmissionType, // Include transmissionType in the payload
+                condition, // Include condition in the payload
+                location, // Include location in the payload
+                description, // Include description in the payload
+                vin // Include vin in the payload
             };
 
             const formData = new FormData();
