@@ -5,15 +5,18 @@ export interface Item {
     mileage: string;
     year: string;
     price: string;
-    color: string;
+    exteriorColor: string;
+    interiorColor: string;
     engineSize: string;
     fuelType: string;
-    transmissionType: string;
+    transmission: string;
     condition: string;
+    drivetrain: string;
+    bodyStyle: string;
     location: string;
     description: string;
     vin: string;
     onAuction: boolean;
     isSold: boolean;
-    images: string[]
+    images: string[];
 }

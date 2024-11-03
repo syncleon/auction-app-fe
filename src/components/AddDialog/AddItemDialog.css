@@ -2,17 +2,9 @@
     padding: 30px;
     max-width: 700px;
     margin: auto;
-    background-color: #ffffff; /* Clean white background */
+    background-color: #ffffff;
     border-radius: 12px;
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
-}
-
-.title {
-    margin-bottom: 30px;
-    text-align: center;
-    font-size: 24px;
-    font-weight: bold;
-    color: #333;
 }
 
 .stepper {
@@ -22,70 +14,89 @@
 .step-label {
     cursor: pointer;
     font-weight: 500;
-    color: black; /* Default color for all steps */
+    color: #757575; /* Default color for all steps */
+    transition: color 0.3s ease, font-size 0.3s ease;
 }
 
 .step-label.completed {
-    color: black; /* Keep the color same for completed steps */
+    color: #4caf50; /* Green for completed steps */
 }
 
 .step-label.current {
-    font-weight: bold; /* Optionally make the current step bold */
-    color: #ff5722; /* Accent color for the current step */
-}
-
-.button-group {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 20px;
-}
-
-.back-button,
-.next-button,
-.submit-button {
-    margin-top: 20px;
-    padding: 10px 20px;
-    border-radius: 8px;
-    border: none;
-    font-size: 16px;
     font-weight: bold;
-    transition: background-color 0.3s ease;
+    color: #ff5722; /* Accent color for the current step */
+    font-size: 1.1rem;
 }
 
-.back-button {
-    background-color: #f44336; /* Red */
-    color: white;
+/* Hover effect for steps */
+.step-label:hover {
+    color: #2196f3; /* Blue on hover */
 }
 
-.back-button:hover {
-    background-color: #d32f2f; /* Darker red */
+/* Step icon color adjustments */
+.MuiStepIcon-root {
+    color: #bdbdbd; /* Default icon color */
+    transition: color 0.3s ease;
 }
 
-.next-button {
-    background-color: #2196f3; /* Blue */
-    color: white;
+.MuiStepIcon-root.MuiStepIcon-completed {
+    color: #4caf50; /* Green for completed icons */
 }
 
-.next-button:hover {
-    background-color: #1976d2; /* Darker blue */
+.MuiStepIcon-root.MuiStepIcon-active {
+    color: #ff5722; /* Accent color for the active icon */
 }
 
-.submit-button {
-    background-color: #4caf50; /* Green */
-    color: white;
+.image-preview img {
+    border: 2px solid #ccc; /* Example border */
+    margin: 0 5px; /* Spacing between images */
 }
 
-.submit-button:hover {
-    background-color: #388e3c; /* Darker green */
+.step-content {
+    padding: 16px;
 }
 
-.loading-spinner {
-    margin: 20px auto;
-    display: block;
+.step-title {
+    margin-bottom: 16px;
 }
 
-.summary {
-    margin-top: 20px;
-    font-weight: normal;
-    color: #555;
+.file-upload {
+    cursor: pointer;
+    border: 2px dashed #ccc;
+    border-radius: 8px;
+    transition: border-color 0.3s ease;
+}
+
+.file-upload:hover {
+    border-color: #aaa;
+}
+
+.upload-icon {
+    margin-bottom: 8px;
+}
+
+.drag-active {
+    color: #3f51b5; /* MUI primary color */
+}
+
+.image-preview {
+    position: relative;
+}
+
+.preview-image {
+    width: 100px;
+    height: auto;
+    border-radius: 4px;
+}
+
+.delete-button {
+    position: absolute;
+    top: 0;
+    right: 0;
+    background-color: white;
+    transition: background-color 0.3s;
+}
+
+.delete-button:hover {
+    background-color: #f5f5f5; /* Light gray background on hover */
 }

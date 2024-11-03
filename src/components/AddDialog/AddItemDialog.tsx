@@ -3,37 +3,38 @@ import { useActions } from "../../hooks/useActions";
 import { RouteNames } from "../../routes";
 import { useNavigate } from "react-router-dom";
 import { useTypedSelector } from "../../hooks/useTypedSelector";
-import { Typography, Stepper, Step } from "@mui/material";
+import {Stepper, Step, StepLabel} from "@mui/material";
 import { message } from "antd";
 import './AddItemDialog.css';
-import CarDetailsDialog from './CarDetailsDialog';
-import FeaturedImageDialog from './FeaturedImageDialog';
-import ExteriorImageDialog from './ExteriorImageDialog';
-import InteriorImageDialog from './InteriorImageDialog';
-import MechanicalImageDialog from './MechanicalImageDialog';
-import OtherImageDialog from './OtherImageDialog';
-import SubmitDialog from './SubmitDialog';
+import CarDetailsDialog from './01_CarDetailsDialog';
+import FeaturedImageDialog from './02_FeaturedImageDialog';
+import ExteriorImageDialog from './03_ExteriorImagesDialog';
+import InteriorImageDialog from './04_InteriorImagesDialog';
+import MechanicalImageDialog from './05_MechanicalImagesDialog';
+import OtherImageDialog from './06_OtherImagesDialog';
+import SubmitDialog from './07_SubmitDIalog';
 import { Item } from "../../models/IItem";
 
 // Import icons from Material-UI
-import CarIcon from '@mui/icons-material/DirectionsCar';
-import FeaturedImageIcon from '@mui/icons-material/Image';
-import ExteriorImageIcon from '@mui/icons-material/CameraAlt';
-import InteriorImageIcon from '@mui/icons-material/Photo';
-import MechanicalImageIcon from '@mui/icons-material/Build';
-import OtherImageIcon from '@mui/icons-material/MoreHoriz';
-import SubmitIcon from '@mui/icons-material/CheckCircle';
+import DriveEta from '@mui/icons-material/DriveEta';
+import PhotoCamera from '@mui/icons-material/PhotoCamera';
+import PhotoLibrary from '@mui/icons-material/PhotoLibrary';
+import Home from '@mui/icons-material/Home';
+import Build from '@mui/icons-material/Build';
+import Image from '@mui/icons-material/Image';
+import CheckCircle from '@mui/icons-material/CheckCircle';
 
 // Define steps with icons
 const steps = [
-    { label: 'Car Details', icon: <CarIcon /> },
-    { label: 'Featured Image', icon: <FeaturedImageIcon /> },
-    { label: 'Exterior Images', icon: <ExteriorImageIcon /> },
-    { label: 'Interior Images', icon: <InteriorImageIcon /> },
-    { label: 'Mechanical Images', icon: <MechanicalImageIcon /> },
-    { label: 'Other Images', icon: <OtherImageIcon /> },
-    { label: 'Submit', icon: <SubmitIcon /> },
+    { label: 'Car Details', icon: <DriveEta /> }, // Represents the car details
+    { label: 'Featured Image', icon: <PhotoCamera /> }, // Indicates uploading the featured image
+    { label: 'Exterior Images', icon: <PhotoLibrary /> }, // Suggests capturing the exterior
+    { label: 'Interior Images', icon: <Home /> }, // Represents the interior images
+    { label: 'Mechanical Images', icon: <Build /> }, // Represents mechanical aspects
+    { label: 'Other Images', icon: <Image /> }, // Indicates other types of images
+    { label: 'Submit', icon: <CheckCircle /> }, // Represents finalizing the submission
 ];
+
 
 const AddItemDialog = () => {
     const { itemError, itemSuccess, itemIsLoading } = useTypedSelector(state => state.addItem);
@@ -48,11 +49,14 @@ const AddItemDialog = () => {
         mileage: '',
         year: '',
         price: '',
-        color: '',
+        exteriorColor: '',
+        interiorColor: '',
         engineSize: '',
         fuelType: '',
-        transmissionType: '',
+        transmission: '',
         condition: '',
+        drivetrain: '',
+        bodyStyle: '',
         location: '',
         description: '',
         vin: '',
@@ -92,11 +96,14 @@ const AddItemDialog = () => {
             item.mileage,
             item.year,
             item.price,
-            item.color,
+            item.exteriorColor, // Updated
+            item.interiorColor, // Updated
             item.engineSize,
             item.fuelType,
-            item.transmissionType,
+            item.transmission,
             item.condition,
+            item.drivetrain, // Updated
+            item.bodyStyle, // Updated
             item.location,
             item.description,
             item.vin,
@@ -118,11 +125,14 @@ const AddItemDialog = () => {
             mileage: '',
             year: '',
             price: '',
-            color: '',
+            exteriorColor: '', // Updated
+            interiorColor: '', // Updated
             engineSize: '',
             fuelType: '',
-            transmissionType: '',
+            transmission: '',
             condition: '',
+            drivetrain: '', // Updated
+            bodyStyle: '', // Updated
             location: '',
             description: '',
             vin: '',
@@ -151,74 +161,27 @@ const AddItemDialog = () => {
 
     return (
         <div className="add-item-dialog">
-            <Stepper activeStep={step} className="stepper">
+            <Stepper activeStep={step} alternativeLabel className="stepper">
                 {steps.map((stepData, index) => (
-                    <Step
-                        key={stepData.label}
-                        completed={index < completedSteps}
-                        onClick={() => handleStepClick(index)} // Handle step click
-                        style={{ cursor: index <= completedSteps ? 'pointer' : 'default' }} // Change cursor based on completion
-                    >
-                        <div className="step-content">
-                            {stepData.icon}
-                            <Typography
-                                className={`step-label ${index < completedSteps ? 'completed' : ''} ${index === step ? 'current' : ''}`}
-                            >
-                                {stepData.label}
-                            </Typography>
-                        </div>
+                    <Step key={stepData.label} completed={index < completedSteps}>
+                        <StepLabel
+                            icon={stepData.icon}
+                            onClick={() => handleStepClick(index)}
+                            className={`step-label ${index < completedSteps ? 'completed' : ''} ${index === step ? 'current' : ''}`}
+                        >
+                            {stepData.label}
+                        </StepLabel>
                     </Step>
                 ))}
             </Stepper>
             <form onSubmit={handleSubmit} className="form-container">
-                {step === 0 && (
-                    <CarDetailsDialog
-                        item={item}
-                        setItem={setItem}
-                        nextStep={nextStep}
-                    />
-                )}
-                {step === 1 && (
-                    <FeaturedImageDialog
-                        setFeaturedImages={setFeaturedImages}
-                        prevStep={prevStep}
-                        nextStep={nextStep}
-                    />
-                )}
-                {step === 2 && (
-                    <ExteriorImageDialog
-                        setExteriorImages={setExteriorImages}
-                        prevStep={prevStep}
-                        nextStep={nextStep}
-                    />
-                )}
-                {step === 3 && (
-                    <InteriorImageDialog
-                        setInteriorImages={setInteriorImages}
-                        prevStep={prevStep}
-                        nextStep={nextStep}
-                    />
-                )}
-                {step === 4 && (
-                    <MechanicalImageDialog
-                        setMechanicalImages={setMechanicalImages}
-                        prevStep={prevStep}
-                        nextStep={nextStep}
-                    />
-                )}
-                {step === 5 && (
-                    <OtherImageDialog
-                        setOtherImages={setOtherImages}
-                        prevStep={prevStep}
-                        nextStep={nextStep}
-                    />
-                )}
-                {step === 6 && (
-                    <SubmitDialog
-                        itemIsLoading={itemIsLoading}
-                        prevStep={prevStep}
-                    />
-                )}
+                {step === 0 && <CarDetailsDialog item={item} setItem={setItem} nextStep={nextStep} />}
+                {step === 1 && <FeaturedImageDialog setFeaturedImages={setFeaturedImages} prevStep={prevStep} nextStep={nextStep} />}
+                {step === 2 && <ExteriorImageDialog setExteriorImages={setExteriorImages} prevStep={prevStep} nextStep={nextStep} />}
+                {step === 3 && <InteriorImageDialog setInteriorImages={setInteriorImages} prevStep={prevStep} nextStep={nextStep} />}
+                {step === 4 && <MechanicalImageDialog setMechanicalImages={setMechanicalImages} prevStep={prevStep} nextStep={nextStep} />}
+                {step === 5 && <OtherImageDialog setOtherImages={setOtherImages} prevStep={prevStep} nextStep={nextStep} />}
+                {step === 6 && <SubmitDialog itemIsLoading={itemIsLoading} prevStep={prevStep} />}
             </form>
         </div>
     );
