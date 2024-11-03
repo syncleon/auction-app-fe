@@ -81,20 +81,20 @@
 
 .image-preview {
     position: relative;
+    width: 100px; /* Adjust the width as needed */
+    height: 100px; /* Adjust the height as needed */
+    overflow: hidden;
 }
 
 .preview-image {
-    width: 100px;
-    height: auto;
-    border-radius: 4px;
+    width: 100%; /* Ensure the image fits the container */
+    height: auto; /* Maintain aspect ratio */
 }
 
 .delete-button {
-    position: absolute;
-    top: 0;
-    right: 0;
-    background-color: white;
-    transition: background-color 0.3s;
+    color: red; /* Change color to make it noticeable */
+    background: white; /* Optional: set background to enhance visibility */
+    border-radius: 50%; /* Make it round */
 }
 
 .delete-button:hover {
