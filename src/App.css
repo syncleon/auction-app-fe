@@ -10,13 +10,13 @@ body, html {
     display: flex;
     flex-direction: column;
     height: 100vh;
-    max-width: 80%;
+    max-width: 60%;
     margin: 0 auto;
     overflow: hidden; /* Prevents container from scrolling */
 }
 
 .app-content {
-    flex: 1;
+    flex: 2;
     overflow-y: auto; /* Enables vertical scrolling */
     overflow-x: hidden; /* Hides horizontal scrollbar */
 

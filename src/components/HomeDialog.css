@@ -1,47 +1,38 @@
+/* Improved Grid layout for auction items */
 .grid-container {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 12px;
-    padding: 12px;
+    grid-template-columns: repeat(auto-fill, minmax(30%, 1fr)); /* Adjust as per your design */
+    gap: 20px;
+    justify-items: start; /* Align items to the left */
+    margin-left: 0; /* Ensure no margin on the left side */
 }
 
-@media (max-width: 1200px) {
-    .grid-container {
-        grid-template-columns: repeat(3, 1fr);
-    }
-}
-
-@media (max-width: 900px) {
-    .grid-container {
-        grid-template-columns: repeat(2, 1fr);
-    }
-}
-
-@media (max-width: 600px) {
-    .grid-container {
-        grid-template-columns: 1fr;
-    }
-}
-
+/* Auction item styling */
 .auction-item {
     position: relative;
     overflow: hidden;
+    background-color: #fff;
+    border-radius: 12px;
 }
 
+/* Image wrapper */
 .image-wrapper {
     position: relative;
     width: 100%;
     height: auto;
     overflow: hidden;
+    border-radius: 12px 12px 0 0;
 }
 
+/* Image itself */
 .auction-item img {
     width: 100%;
     height: auto;
     object-fit: cover;
-    transition: transform 0.3s, box-shadow 0.3s;
+    transition: none; /* No transition effects on image */
 }
 
+/* Black overlay with opacity change */
 .image-wrapper::before {
     content: '';
     position: absolute;
@@ -49,24 +40,43 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0);
-    transition: background 0.3s ease;
+    background: rgba(0, 0, 0, 0); /* Initial black background with 0 opacity */
+    transition: background 0.4s ease; /* Transition the background for smooth effect */
     z-index: 1;
 }
 
-.image-wrapper:hover::before {
-    background: rgba(0, 0, 0, 0.4);
+/* Hover effect: Increase black opacity on hover */
+.auction-item:hover .image-wrapper::before {
+    background: rgba(0, 0, 0, 0.4); /* Apply black overlay with opacity on hover */
 }
 
-.auction-item img:hover {
-    transform: scale(1.05);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-}
-
-.auction-item h3,
-.auction-item p {
-    margin: 4px 0;
-    padding: 0;
-    position: relative;
+/* Badge Styling */
+.badge {
+    position: absolute;
+    bottom: 15px;
+    left: 15px; /* Bottom-left positioning */
+    padding: 8px 18px;
+    background-color: rgba(0, 0, 0, 0.9); /* Semi-transparent black */
+    color: white;
+    font-size: 14px;
+    font-weight: bold;
+    text-align: center;
+    border-radius: 10px;
     z-index: 2;
+}
+
+/* Active Auction Badge */
+.badge.active {
+    background-color: rgba(0, 0, 0, 0.9); /* Black background */
+}
+
+/* Ended Auction Badge */
+.badge.ended {
+    background-color: rgba(0, 0, 0, 0.9); /* White background */
+    color: white;
+}
+
+/* Sold Auction Badge */
+.badge.sold {
+    background-color: rgba(0, 0, 0, 0.9); /* Black background */
 }

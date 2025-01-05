@@ -4,5 +4,6 @@ export const API_ENDPOINTS = {
     SIGN_IN: `${BASE_URL}/signin`,
     SIGNUP: `${BASE_URL}/signup`,
     ITEMS: `${BASE_URL}/items`,
+    AUCTIONS: `${BASE_URL}/auctions`,
     CURRENT_USER_ITEMS : `${BASE_URL}/users/current/items`,
 };

@@ -1,7 +1,6 @@
 import React, { FC, useEffect } from 'react';
 import AppRouter from './components/AppRouter';
 import Navbar from './components/Navbar';
-import { Container } from '@mui/material';
 import { useActions } from "./hooks/useActions";
 import { IUser } from "./models/IUsers";
 import './App.css';
@@ -19,9 +18,7 @@ const App: FC = () => {
     return (
         <div className="app-container">
             <Navbar />
-            <Container className="app-content">
                 <AppRouter />
-            </Container>
         </div>
     );
 };
