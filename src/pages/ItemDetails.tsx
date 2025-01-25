@@ -3,9 +3,7 @@ import ItemDetailsDialog from "../components/ItemDetailsDialog";
 
 const ItemDetails = () => {
     return (
-        <div>
             <ItemDetailsDialog />
-        </div>
     );
 };
 

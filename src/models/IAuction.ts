@@ -1,9 +1,7 @@
-import {Item} from "./IItem";
-
 export interface Auction {
     id: string;
     userId: number;
-    item: Item;
+    itemId: string;
     bids: any[];
     currentMaxBid: number;
     expectedPrice: number;

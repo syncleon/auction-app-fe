@@ -1,4 +1,3 @@
-/* app.css */
 body, html {
     margin: 0;
     padding: 0;
@@ -10,26 +9,31 @@ body, html {
     display: flex;
     flex-direction: column;
     height: 100vh;
-    max-width: 60%;
+    max-width: 70%;
     margin: 0 auto;
-    overflow: hidden; /* Prevents container from scrolling */
+    overflow: hidden; /* Keeps horizontal scrolling disabled */
 }
 
 .app-content {
     flex: 2;
-    overflow-y: auto; /* Enables vertical scrolling */
+    overflow-y: scroll; /* Enables vertical scrolling */
     overflow-x: hidden; /* Hides horizontal scrollbar */
 
     /* Hide scrollbar for Chrome, Safari, and Edge */
     &::-webkit-scrollbar {
-        display: none;
+        width: 8px; /* Optional: Customize scrollbar width */
     }
 
-    /* Hide scrollbar for Firefox */
-    scrollbar-width: none; /* Firefox */
-}
+    &::-webkit-scrollbar-thumb {
+        background: #888; /* Optional: Scrollbar color */
+        border-radius: 4px; /* Optional: Rounded edges */
+    }
 
-.logo:hover {
-    opacity: 0.7;
-    cursor: pointer;
+    &::-webkit-scrollbar-thumb:hover {
+        background: #555; /* Optional: Scrollbar hover color */
+    }
+
+    /* For Firefox */
+    scrollbar-width: thin; /* Thin scrollbar */
+    scrollbar-color: #888 transparent; /* Scrollbar color */
 }

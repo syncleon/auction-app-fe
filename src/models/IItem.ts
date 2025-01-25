@@ -1,3 +1,5 @@
+import {Auction} from "./IAuction";
+
 export interface Item {
     id: string;
     make: string;
@@ -19,4 +21,5 @@ export interface Item {
     onAuction: boolean;
     isSold: boolean;
     images: string[];
+    auctions: Auction[];
 }

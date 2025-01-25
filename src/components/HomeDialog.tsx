@@ -1,36 +1,31 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './HomeDialog.css';
-import { Item } from "../models/IItem";
 import { API_ENDPOINTS } from "../apiService";
 import { RouteNames } from "../routes";
-
-interface AuctionItem {
-    item: Item;
-    endTime: number;
-    auctionStatus: 'STARTED' | 'CLOSED';
-}
+import ClockIcon from '../resources/clock.svg';
+import {Item} from "../models/IItem";
 
 const HomeDialog: React.FC = () => {
-    const [auctionItems, setAuctionItems] = useState<AuctionItem[]>([]);
+    const [auctions, setAuctions] = useState<Item[]>([]);  // Use Auction interface
     const [featuredImages, setFeaturedImages] = useState<{ [key: string]: string }>({});
     const navigate = useNavigate();
 
     useEffect(() => {
         const fetchAuctionItems = async () => {
             try {
-                const response = await fetch(API_ENDPOINTS.AUCTIONS);
-                const auctions: AuctionItem[] = await response.json();
+                const response = await fetch(API_ENDPOINTS.ITEMS);
+                const fetchedAuctions: Item[] = await response.json();  // Use Auction type
 
-                setAuctionItems(auctions);
+                setAuctions(fetchedAuctions);
 
                 await Promise.all(
-                    auctions.map(async ({ item }) => {
-                        const filenameResponse = await fetch(`${API_ENDPOINTS.ITEMS}/${item.id}/images/featured`);
+                    fetchedAuctions.map(async ({id }) => {
+                        const filenameResponse = await fetch(`${API_ENDPOINTS.ITEMS}/${id}/images/featured`);
                         if (filenameResponse.ok) {
                             const filenames: string[] = await filenameResponse.json();
                             if (filenames.length > 0) {
-                                setFeaturedImages(prev => ({ ...prev, [item.id]: filenames[0] }));
+                                setFeaturedImages(prev => ({ ...prev, [id]: filenames[0] }));
                             }
                         }
                     })
@@ -45,8 +40,8 @@ const HomeDialog: React.FC = () => {
 
     useEffect(() => {
         const interval = setInterval(() => {
-            setAuctionItems(prevItems => {
-                return prevItems.map(auction => {
+            setAuctions(prevAuctions => {
+                return prevAuctions.map(auction => {
                     if (auction.auctionStatus === 'STARTED' && auction.endTime <= Date.now()) {
                         return { ...auction, auctionStatus: 'CLOSED' };
                     }
@@ -77,14 +72,12 @@ const HomeDialog: React.FC = () => {
         return `${API_ENDPOINTS.ITEMS}/${itemId}/images/featured/${filename}`;
     };
 
-    const currentAuctions = auctionItems.filter(auction => auction.auctionStatus === 'STARTED');
-    const pastAuctions = auctionItems.filter(auction => auction.auctionStatus === 'CLOSED');
+    const currentAuctions = auctions.filter(auction => auction.auctionStatus === 'STARTED');
 
     return (
         <div className="home-dialog">
-            {/* Current Auctions Section */}
             <div className="auction-section">
-                <h2>Active listing</h2>
+                <h2>Auctions</h2>
                 <div className="grid-container">
                     {currentAuctions.map(({ item, endTime }) => (
                         <div key={item.id} className="auction-item">
@@ -93,7 +86,10 @@ const HomeDialog: React.FC = () => {
                                     src={featuredImages[item.id] ? getFeaturedImageUrl(item.id, featuredImages[item.id]) : ''}
                                     alt={`${item.year} ${item.make} ${item.model}`}
                                 />
-                                <div className={`badge active`}>{calculateTimeLeft(endTime)}</div>
+                                <div className={`badge active`}>
+                                    <img src={ClockIcon} alt="Clock Icon" className="clock-icon"/>
+                                    {calculateTimeLeft(endTime)}
+                                </div>
                             </div>
                             <h3>{item.year} {item.make} {item.model}</h3>
                             <p>
@@ -105,28 +101,6 @@ const HomeDialog: React.FC = () => {
                 </div>
             </div>
 
-            {/* Past Auctions Section */}
-            <div className="past-auction-section">
-                <h2>Past Results</h2>
-                <div className="grid-container">
-                    {pastAuctions.map(({ item }) => (
-                        <div key={item.id} className="auction-item">
-                            <div className="image-wrapper" onClick={() => handleImageClick(item.id)}>
-                                <img
-                                    src={featuredImages[item.id] ? getFeaturedImageUrl(item.id, featuredImages[item.id]) : ''}
-                                    alt={`${item.year} ${item.make} ${item.model}`}
-                                />
-                                <div className={`badge ended`}>Ended</div>
-                            </div>
-                            <h3>{item.year} {item.make} {item.model}</h3>
-                            <p>
-                                {item.mileage} km,&nbsp;
-                                {item.isSold ? 'Sold' : 'Available'}
-                            </p>
-                        </div>
-                    ))}
-                </div>
-            </div>
         </div>
     );
 };
