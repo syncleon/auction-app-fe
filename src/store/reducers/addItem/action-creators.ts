@@ -37,14 +37,14 @@ export const AddItemActionCreators = {
         mileage: string,
         year: string,
         price: string,
-        exteriorColor: string, // New field
-        interiorColor: string, // New field
+        exteriorColor: string,
+        interiorColor: string,
         engineSize: string,
         fuelType: string,
-        transmission: string, // Updated field name
+        transmission: string,
         condition: string,
-        drivetrain: string, // New field
-        bodyStyle: string, // New field
+        drivetrain: string,
+        bodyStyle: string,
         location: string,
         description: string,
         vin: string,
@@ -66,21 +66,28 @@ export const AddItemActionCreators = {
                 model,
                 mileage,
                 year,
-                price,
-                exteriorColor, // New field
-                interiorColor, // New field
+                price: parseFloat(price), // Converting price to a number
+                exteriorColor,
+                interiorColor,
                 engineSize,
                 fuelType,
-                transmission, // Updated field name
+                transmission,
                 condition,
-                drivetrain, // New field
-                bodyStyle, // New field
+                drivetrain,
+                bodyStyle,
                 location,
                 description,
                 vin,
-                onAuction: false, // Default value, if applicable
-                isSold: false, // Default value, if applicable
-                images: [] // Assuming images will be handled separately
+                onAuction: false, // Default value
+                isSold: false, // Default value
+                imagesFeatured: [], // Initialize as empty array
+                imagesExterior: [], // Initialize as empty array
+                imagesInterior: [], // Initialize as empty array
+                imagesMechanical: [], // Initialize as empty array
+                imagesOther: [], // Initialize as empty array
+                userId: 0, // Assuming user ID is set elsewhere
+                username: '', // Assuming username is set elsewhere
+                auction: undefined // Assuming auction is handled separately
             };
 
             const formData = new FormData();
@@ -88,14 +95,16 @@ export const AddItemActionCreators = {
             // Add payload data as JSON blob
             formData.append("payload", new Blob([JSON.stringify(payloadData)], { type: "application/json" }));
 
-            // Append each category of images
-            for (const [category, files] of Object.entries(images)) {
+            // Append images to formData, ensuring correct category names match the API expectations
+            const imageCategories = ['featured', 'exterior', 'interior', 'mechanical', 'other'];
+            imageCategories.forEach(category => {
+                const files = images[category as keyof typeof images];
                 if (files) {
                     Array.from(files).forEach(file => {
                         formData.append(`images_${category}`, file);
                     });
                 }
-            }
+            });
 
             const token = localStorage.getItem("token");
             const headers = {

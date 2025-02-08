@@ -2,12 +2,17 @@ export interface Auction {
     id: string;
     userId: number;
     itemId: string;
-    bids: any[];
-    currentMaxBid: number;
-    expectedPrice: number;
     auctionStatus: string;
+    bids: any[];  // Assuming BidDto would be translated to an appropriate type
+    currentHighestBid: number;
+    expectedPrice: number;
+    reservePrice: number | null;
+    winningBidId: string | null;
+    duration: string;
     startTime: number;
     endTime: number;
+    bidCount: number;
     isExtended: boolean;
-    duration: string;
+    isAutoExtendEnabled: boolean;
+    autoExtendDuration: number;
 }

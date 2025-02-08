@@ -6,7 +6,7 @@ export interface Item {
     model: string;
     mileage: string;
     year: string;
-    price: string;
+    price: number;
     exteriorColor: string;
     interiorColor: string;
     engineSize: string;
@@ -20,6 +20,12 @@ export interface Item {
     vin: string;
     onAuction: boolean;
     isSold: boolean;
-    images: string[];
-    auctions: Auction[];
+    imagesFeatured: string[];
+    imagesExterior: string[];
+    imagesInterior: string[];
+    imagesMechanical: string[];
+    imagesOther: string[];
+    userId: number;
+    username: string;
+    auction?: Auction;
 }

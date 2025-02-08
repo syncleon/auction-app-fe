@@ -5,7 +5,8 @@ import {
     Typography,
     FormControl,
     Grid,
-    Autocomplete, FormHelperText
+    Autocomplete,
+    FormHelperText
 } from "@mui/material";
 import { Item } from "../../models/IItem";
 import { carMakesAndModels } from "../../resources/carMakesAndModels";
@@ -28,33 +29,6 @@ const CarDetailsDialog: React.FC<GeneralInfoDialogProps> = ({ item, setItem, nex
 
     const [filteredModels, setFilteredModels] = useState<string[]>([]);
     const [errors, setErrors] = useState<{ [key: string]: string }>({});
-
-    const validateFields = () => {
-        const { year, mileage, price, vin, location } = item;
-        const errors: { year?: string; mileage?: string; price?: string; vin?: string; location?: string } = {};
-        if (!year) {
-            errors.year = "Year is required.";
-        } else if (isNaN(Number(year))) {
-            errors.year = "Year must be a valid number.";
-        }
-        if (!mileage) {
-            errors.mileage = "Mileage is required.";
-        } else if (isNaN(Number(mileage)) || Number(mileage) < 0) {
-            errors.mileage = "Mileage must be a non-negative number.";
-        }
-        if (!price) {
-            errors.price = "Price is required.";
-        } else if (isNaN(Number(price)) || Number(price) < 0) {
-            errors.price = "Price must be a non-negative number.";
-        }
-        if (!vin) {
-            errors.vin = "VIN is required.";
-        } else if (vin.length !== 17) {
-            errors.vin = "VIN must be exactly 17 characters long.";
-        }
-        setErrors(errors);
-        return Object.keys(errors).length === 0;
-    };
 
     const handleMakeChange = (event: any, value: any) => {
         if (value) {
@@ -88,24 +62,28 @@ const CarDetailsDialog: React.FC<GeneralInfoDialogProps> = ({ item, setItem, nex
 
         setItem(prev => ({ ...prev, [field]: value }));
     };
+
     return (
         <div className="step-content">
             <Typography variant="h6" className="step-title">Tell Us More About Your Car</Typography>
             <Grid container spacing={2}>
                 <Grid item xs={12} sm={6}>
-                    <FormControl fullWidth margin="dense">
-                        <Typography variant="body2" gutterBottom>Make <span style={{ color: 'red' }}>*</span></Typography>
+                    <FormControl fullWidth margin="dense" error={!!errors.make}>
+                        <Typography variant="body2" gutterBottom>
+                            Make <span style={{ color: 'red' }}>*</span>
+                        </Typography>
                         <Autocomplete
                             options={carMakesAndModels}
                             getOptionLabel={(option) => option.make}
                             onChange={handleMakeChange}
                             renderInput={(params) => <TextField {...params} variant="outlined" size="small" />}
-                            value={carMakesAndModels.find(make => make.make === item.make) || null} // Persist make selection
+                            value={carMakesAndModels.find(make => make.make === item.make) || null}
                         />
+                        {errors.make && <FormHelperText>{errors.make}</FormHelperText>}
                     </FormControl>
                 </Grid>
                 <Grid item xs={12} sm={6}>
-                    <FormControl fullWidth margin="dense">
+                    <FormControl fullWidth margin="dense" error={!!errors.model}>
                         <Typography variant="body2" gutterBottom>
                             Model <span style={{ color: 'red' }}>*</span>
                         </Typography>
@@ -116,6 +94,7 @@ const CarDetailsDialog: React.FC<GeneralInfoDialogProps> = ({ item, setItem, nex
                             disabled={!item.make}
                             value={item.model}
                         />
+                        {errors.model && <FormHelperText>{errors.model}</FormHelperText>}
                         {!item.make && (
                             <FormHelperText style={{ color: 'gray' }}>
                                 Available after selecting make
@@ -124,8 +103,10 @@ const CarDetailsDialog: React.FC<GeneralInfoDialogProps> = ({ item, setItem, nex
                     </FormControl>
                 </Grid>
                 <Grid item xs={12} sm={6}>
-                    <FormControl fullWidth margin="dense">
-                        <Typography variant="body2" gutterBottom>Year <span style={{ color: 'red' }}>*</span></Typography>
+                    <FormControl fullWidth margin="dense" error={!!errors.year}>
+                        <Typography variant="body2" gutterBottom>
+                            Year <span style={{ color: 'red' }}>*</span>
+                        </Typography>
                         <Autocomplete
                             options={years}
                             value={item.year || null}
@@ -145,8 +126,10 @@ const CarDetailsDialog: React.FC<GeneralInfoDialogProps> = ({ item, setItem, nex
                     </FormControl>
                 </Grid>
                 <Grid item xs={12} sm={6}>
-                    <FormControl fullWidth margin="dense">
-                        <Typography variant="body2" gutterBottom>Mileage<span style={{ color: 'red' }}>*</span></Typography>
+                    <FormControl fullWidth margin="dense" error={!!errors.mileage}>
+                        <Typography variant="body2" gutterBottom>
+                            Mileage <span style={{ color: 'red' }}>*</span>
+                        </Typography>
                         <TextField
                             variant="outlined"
                             size="small"
@@ -161,8 +144,10 @@ const CarDetailsDialog: React.FC<GeneralInfoDialogProps> = ({ item, setItem, nex
                     </FormControl>
                 </Grid>
                 <Grid item xs={12} sm={6}>
-                    <FormControl fullWidth margin="dense">
-                        <Typography variant="body2" gutterBottom>Price<span style={{ color: 'red' }}>*</span></Typography>
+                    <FormControl fullWidth margin="dense" error={!!errors.price}>
+                        <Typography variant="body2" gutterBottom>
+                            Price <span style={{ color: 'red' }}>*</span>
+                        </Typography>
                         <TextField
                             variant="outlined"
                             size="small"
@@ -177,8 +162,10 @@ const CarDetailsDialog: React.FC<GeneralInfoDialogProps> = ({ item, setItem, nex
                     </FormControl>
                 </Grid>
                 <Grid item xs={12} sm={6}>
-                    <FormControl fullWidth margin="dense">
-                        <Typography variant="body2" gutterBottom>VIN <span style={{ color: 'red' }}>*</span></Typography>
+                    <FormControl fullWidth margin="dense" error={!!errors.vin}>
+                        <Typography variant="body2" gutterBottom>
+                            VIN <span style={{ color: 'red' }}>*</span>
+                        </Typography>
                         <TextField
                             variant="outlined"
                             size="small"
@@ -193,13 +180,13 @@ const CarDetailsDialog: React.FC<GeneralInfoDialogProps> = ({ item, setItem, nex
                     <FormControl fullWidth margin="dense">
                         <Typography variant="body2" gutterBottom>Body Style</Typography>
                         <Autocomplete
-                            options={bodyStyles} // Assuming bodyStyles is an array of options
-                            getOptionLabel={(option) => option.label} // Adjust based on your structure
+                            options={bodyStyles}
+                            getOptionLabel={(option) => option.label}
                             onChange={(event, value) => {
                                 setItem(prev => ({ ...prev, bodyStyle: value ? value.label : '' }));
                             }}
-                            renderInput={(params) => <TextField {...params} variant="outlined" size="small"/>}
-                            value={bodyStyles.find(style => style.label === item.bodyStyle) || null} // Persist selection
+                            renderInput={(params) => <TextField {...params} variant="outlined" size="small" />}
+                            value={bodyStyles.find(style => style.label === item.bodyStyle) || null}
                         />
                     </FormControl>
                 </Grid>
@@ -225,8 +212,8 @@ const CarDetailsDialog: React.FC<GeneralInfoDialogProps> = ({ item, setItem, nex
                             onChange={(event, value) => {
                                 setItem(prev => ({ ...prev, exteriorColor: value ? value.label : '' }));
                             }}
-                            renderInput={(params) => <TextField {...params} variant="outlined" size="small"/>}
-                            value={colors.find(color => color.label === item.exteriorColor) || null} // Persist selection
+                            renderInput={(params) => <TextField {...params} variant="outlined" size="small" />}
+                            value={colors.find(color => color.label === item.exteriorColor) || null}
                         />
                     </FormControl>
                 </Grid>
@@ -239,8 +226,8 @@ const CarDetailsDialog: React.FC<GeneralInfoDialogProps> = ({ item, setItem, nex
                             onChange={(event, value) => {
                                 setItem(prev => ({ ...prev, fuelType: value ? value.label : '' }));
                             }}
-                            renderInput={(params) => <TextField {...params} variant="outlined" size="small"/>}
-                            value={fuelTypes.find(type => type.label === item.fuelType) || null} // Persist selection
+                            renderInput={(params) => <TextField {...params} variant="outlined" size="small" />}
+                            value={fuelTypes.find(type => type.label === item.fuelType) || null}
                         />
                     </FormControl>
                 </Grid>
@@ -253,8 +240,8 @@ const CarDetailsDialog: React.FC<GeneralInfoDialogProps> = ({ item, setItem, nex
                             onChange={(event, value) => {
                                 setItem(prev => ({ ...prev, condition: value ? value.label : '' }));
                             }}
-                            renderInput={(params) => <TextField {...params} variant="outlined" size="small"/>}
-                            value={conditions.find(condition => condition.label === item.condition) || null} // Persist selection
+                            renderInput={(params) => <TextField {...params} variant="outlined" size="small" />}
+                            value={conditions.find(condition => condition.label === item.condition) || null}
                         />
                     </FormControl>
                 </Grid>
@@ -267,8 +254,8 @@ const CarDetailsDialog: React.FC<GeneralInfoDialogProps> = ({ item, setItem, nex
                             onChange={(event, value) => {
                                 setItem(prev => ({ ...prev, transmission: value ? value.label : '' }));
                             }}
-                            renderInput={(params) => <TextField {...params} variant="outlined" size="small"/>}
-                            value={transmissionTypes.find(type => type.label === item.transmission) || null} // Persist selection
+                            renderInput={(params) => <TextField {...params} variant="outlined" size="small" />}
+                            value={transmissionTypes.find(type => type.label === item.transmission) || null}
                         />
                     </FormControl>
                 </Grid>
@@ -281,8 +268,8 @@ const CarDetailsDialog: React.FC<GeneralInfoDialogProps> = ({ item, setItem, nex
                             onChange={(event, value) => {
                                 setItem(prev => ({ ...prev, drivetrain: value ? value.label : '' }));
                             }}
-                            renderInput={(params) => <TextField {...params} variant="outlined" size="small"/>}
-                            value={drivetrainOptions.find(option => option.label === item.drivetrain) || null} // Persist selection
+                            renderInput={(params) => <TextField {...params} variant="outlined" size="small" />}
+                            value={drivetrainOptions.find(option => option.label === item.drivetrain) || null}
                         />
                     </FormControl>
                 </Grid>

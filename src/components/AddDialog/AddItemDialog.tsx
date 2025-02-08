@@ -3,7 +3,7 @@ import { useActions } from "../../hooks/useActions";
 import { RouteNames } from "../../routes";
 import { useNavigate } from "react-router-dom";
 import { useTypedSelector } from "../../hooks/useTypedSelector";
-import {Stepper, Step, StepLabel} from "@mui/material";
+import { Stepper, Step, StepLabel } from "@mui/material";
 import { message } from "antd";
 import './AddItemDialog.css';
 import CarDetailsDialog from './01_CarDetailsDialog';
@@ -12,10 +12,7 @@ import ExteriorImageDialog from './03_ExteriorImagesDialog';
 import InteriorImageDialog from './04_InteriorImagesDialog';
 import MechanicalImageDialog from './05_MechanicalImagesDialog';
 import OtherImageDialog from './06_OtherImagesDialog';
-import SubmitDialog from './07_SubmitDIalog';
 import { Item } from "../../models/IItem";
-
-// Import icons from Material-UI
 import DriveEta from '@mui/icons-material/DriveEta';
 import PhotoCamera from '@mui/icons-material/PhotoCamera';
 import PhotoLibrary from '@mui/icons-material/PhotoLibrary';
@@ -23,32 +20,30 @@ import Home from '@mui/icons-material/Home';
 import Build from '@mui/icons-material/Build';
 import Image from '@mui/icons-material/Image';
 import CheckCircle from '@mui/icons-material/CheckCircle';
+import SubmitDialog from "./07_SubmitDIalog";
 
-// Define steps with icons
 const steps = [
-    { label: 'Car Details', icon: <DriveEta /> }, // Represents the car details
-    { label: 'Featured Image', icon: <PhotoCamera /> }, // Indicates uploading the featured image
-    { label: 'Exterior Images', icon: <PhotoLibrary /> }, // Suggests capturing the exterior
-    { label: 'Interior Images', icon: <Home /> }, // Represents the interior images
-    { label: 'Mechanical Images', icon: <Build /> }, // Represents mechanical aspects
-    { label: 'Other Images', icon: <Image /> }, // Indicates other types of images
-    { label: 'Submit', icon: <CheckCircle /> }, // Represents finalizing the submission
+    { label: 'Car Details', icon: <DriveEta /> },
+    { label: 'Featured Image', icon: <PhotoCamera /> },
+    { label: 'Exterior Images', icon: <PhotoLibrary /> },
+    { label: 'Interior Images', icon: <Home /> },
+    { label: 'Mechanical Images', icon: <Build /> },
+    { label: 'Other Images', icon: <Image /> },
+    { label: 'Submit', icon: <CheckCircle /> },
 ];
-
 
 const AddItemDialog = () => {
     const { itemError, itemSuccess, itemIsLoading } = useTypedSelector(state => state.addItem);
     const { addItem, setItemSuccess, setItemIsError } = useActions();
     const navigate = useNavigate();
 
-    // Initial state for item based on the Item interface
     const [item, setItem] = useState<Item>({
         id: '',
         make: '',
         model: '',
         mileage: '',
         year: '',
-        price: '',
+        price: 0, // Default price as number
         exteriorColor: '',
         interiorColor: '',
         engineSize: '',
@@ -62,7 +57,14 @@ const AddItemDialog = () => {
         vin: '',
         onAuction: false,
         isSold: false,
-        images: []
+        imagesFeatured: [],
+        imagesExterior: [],
+        imagesInterior: [],
+        imagesMechanical: [],
+        imagesOther: [],
+        userId: 0, // Assuming userId is a number
+        username: '',
+        auction: undefined, // Optional
     });
 
     const [featuredImages, setFeaturedImages] = useState<FileList | null>(null);
@@ -90,20 +92,21 @@ const AddItemDialog = () => {
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+
         addItem(
             item.make,
             item.model,
             item.mileage,
             item.year,
-            item.price,
-            item.exteriorColor, // Updated
-            item.interiorColor, // Updated
+            item.price.toString(),
+            item.exteriorColor,
+            item.interiorColor,
             item.engineSize,
             item.fuelType,
             item.transmission,
             item.condition,
-            item.drivetrain, // Updated
-            item.bodyStyle, // Updated
+            item.drivetrain,
+            item.bodyStyle,
             item.location,
             item.description,
             item.vin,
@@ -124,21 +127,28 @@ const AddItemDialog = () => {
             model: '',
             mileage: '',
             year: '',
-            price: '',
-            exteriorColor: '', // Updated
-            interiorColor: '', // Updated
+            price: 0, // Ensure price is reset to a number
+            exteriorColor: '',
+            interiorColor: '',
             engineSize: '',
             fuelType: '',
             transmission: '',
             condition: '',
-            drivetrain: '', // Updated
-            bodyStyle: '', // Updated
+            drivetrain: '',
+            bodyStyle: '',
             location: '',
             description: '',
             vin: '',
             onAuction: false,
             isSold: false,
-            images: []
+            imagesFeatured: [],
+            imagesExterior: [],
+            imagesInterior: [],
+            imagesMechanical: [],
+            imagesOther: [],
+            userId: 0, // Reset userId
+            username: '',
+            auction: undefined,
         });
         setFeaturedImages(null);
         setExteriorImages(null);
