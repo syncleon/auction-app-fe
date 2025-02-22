@@ -63,13 +63,19 @@ const HomeDialog: React.FC = () => {
         const difference = endTime - Date.now();
         if (difference <= 0) return 'Ended';
 
+        const days = Math.floor(difference / (1000 * 60 * 60 * 24));
         const hours = Math.floor((difference / (1000 * 60 * 60)) % 24);
         const minutes = Math.floor((difference / (1000 * 60)) % 60);
         const seconds = Math.floor((difference / 1000) % 60);
 
-        return `${hours}h ${minutes}m ${seconds}s`;
+        if (days > 0) {
+            return `${days} day${days > 1 ? 's' : ''} left`;
+        } else if (hours > 0) {
+            return `${hours} h ${minutes} m left`;
+        } else {
+            return `${minutes} m ${seconds} s left`;
+        }
     };
-
 
     // Handle image click to navigate to the item details
     const handleImageClick = (itemId: string) => {
@@ -81,7 +87,14 @@ const HomeDialog: React.FC = () => {
         return filename ? `${API_ENDPOINTS.ITEMS}/${itemId}/images/featured/${filename}` : 'path/to/placeholder/image.png'; // Fallback if no image
     };
 
-    const filteredItemsByAuctionStarted = items.filter(item => item.auction?.auctionStatus === 'STARTED');
+    // Filter and sort items by auction start and remaining time
+    const filteredItemsByAuctionStarted = items
+        .filter(item => item.auction?.auctionStatus === 'STARTED')
+        .sort((a, b) => {
+            const timeLeftA = a.auction?.endTime ? a.auction.endTime - Date.now() : 0;
+            const timeLeftB = b.auction?.endTime ? b.auction.endTime - Date.now() : 0;
+            return timeLeftA - timeLeftB; // Sort from least time left
+        });
 
     return (
         <div className="home-dialog">
